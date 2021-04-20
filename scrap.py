@@ -205,7 +205,7 @@ def scrapIMDB(ImdbId) :
 #ids = ["tt5074352","tt6980546","tt7838158","tt7465992","tt2631186","tt7392212"]
 
 import pandas as pd
-ids =pd.read_csv('TeluguIds.csv').iloc[:,0]
+ids =pd.read_csv('imdbids.csv').iloc[:,0]
 ids = list(ids)
 
 listId=ids
