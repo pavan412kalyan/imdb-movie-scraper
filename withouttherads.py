@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
+# -*- coding: utf-8 -*-
+
 
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
-import logging
-from threading import Thread
-from json import JSONDecoder
 
-def scrapSeason(imdbID,season_no,seasons) :
+
+def scrapSeason(imdbID,season_no) :
     seasons_url="https://www.imdb.com/title/"+imdbID+"/episodes/?season="+str(season_no)
     r = requests.get(url=seasons_url)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -26,17 +26,12 @@ def scrapSeason(imdbID,season_no,seasons) :
             episode['title']=e.find('strong').find('a')['title']
             episode['episode_url']=e.find('strong').find('a')['href']
             episode['rating_value']=e.find('span',{'class' : 'ipl-rating-star__rating'}).string.strip()
-            episode['total_votes']=e.find('span',{'class' : 'ipl-rating-star__total-votes'}).string.strip()
+            episode['rating_value']=e.find('span',{'class' : 'ipl-rating-star__total-votes'}).string.strip()
             episode['episode_plot']=e.find('div',{'class' : 'item_description'}).string.strip()
             episodes.append(episode)
         except :
             pass
-    print(season_no+"scraped")
-
-#    seasons.append(episodes)
-    seasons[int(season_no)-1]=episodes
-
-#    return episodes
+    return episodes
 
 
 
@@ -73,33 +68,20 @@ def scrapeTv(imdbID) :
     
     #########
     tv_series['imdbID']=imdbID
-    seasons= [{}]*len(seasons_tag)
-    threads = []
-
+    seasons= []
     for s in seasons_tag :
         season_no=s['value']
-#        season=scrapSeason(imdbID,season_no)
-#        season=scrapSeason(imdbID,season_no,seasons)
-        process = Thread(target=scrapSeason, args=[imdbID,season_no,seasons])
-        process.start()
-        threads.append(process)
-#        seasons.append(season)
-    
-    for process in threads:
-        process.join()
-    
+        season=scrapSeason(imdbID,season_no)
+        seasons.append(season)
     tv_series['seasons']=seasons
     
     return tv_series
-        
-
+ 
 
 #import time
 #start = time.process_time()
 #ans=scrapeTv("tt0898266")
 #print(time.process_time() - start)
-#
-#         
-
+  
 
 

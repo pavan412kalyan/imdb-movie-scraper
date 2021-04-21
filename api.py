@@ -2,7 +2,7 @@
 import pymongo
 from pymongo import MongoClient
 import flask
-from flask import request, jsonify
+from flask import request, jsonify,render_template
 import sys
 import re
 
@@ -58,7 +58,7 @@ app.config["DEBUG"] = True
 
 @app.route('/', methods=['GET'])
 def home():
-    return "Telugu IMDB API"
+    return render_template('home.html')
 
 
 @app.route('/api/movie/<movie>', methods=['GET'])
@@ -126,7 +126,5 @@ def scrapeTvshow(id):
     data =scrapeTv(id)
     return jsonify(data)
     
-
-
 
 app.run()

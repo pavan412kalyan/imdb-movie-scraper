@@ -1,5 +1,26 @@
-https://www.imdb.com/india/telugu/
 
+#FLASK_APP='api.app' flask routes
+
+
+ScrapMovieNow     GET      /api/livescraper/movie/<id>
+SearchById        GET      /api/imdbid/<id>
+SearchImagesById  GET      /api/images/<id>
+genre             GET      /api/genre/<genre>
+home              GET      /
+movie             GET      /api/movie/<movie>
+scrapeReviewsNow  GET      /api/livescraper/reviews/<id>
+scrapeTvshow      GET      /api/livescraper/tv/<id>
+static            GET      /static/<path:filename>
+trendingIndia     GET      /api/livescraper/trendingIndia/<lan>
+
+
+
+
+
+
+
+
+https://www.imdb.com/india/telugu/
 https://www.imdb.com/search/title/?title_type=feature&languages=te&sort=user_rating,desc&count=250&start=251&ref_=adv_nxt
 
 https://www.imdb.com/search/title/
