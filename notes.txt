@@ -1,0 +1,9 @@
+https://www.imdb.com/india/telugu/
+
+https://www.imdb.com/search/title/?title_type=feature&languages=te&sort=user_rating,desc&count=250&start=251&ref_=adv_nxt
+
+https://www.imdb.com/search/title/
+
+https://www.imdb.com/search/title/?title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,video_game,short,video,tv_short&countries=in&view=simple
+
+https://www.imdb.com/search/title/?title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,video_game,short,video,tv_short&languages=te&view=simple&sort=moviemeter,desc&count=250

@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
+
 def getMovieDetails(imdbID):
     data = {}
     
@@ -26,6 +27,9 @@ def getMovieDetails(imdbID):
     #page title
     title = soup.find('title')
     data["title"] = title.string
+
+    
+
 
     #title Year
 
@@ -191,5 +195,11 @@ def scrapIMDB(ImdbId) :
     data['images'] = getImages(ImdbId)
     data['info']    = getMovieDetails(ImdbId)
     data['crew_data'] =  getCrewData(ImdbId)
+    data['name']=""
+    try:
+        if 'name' in data['info']['expanded'][0] :
+            data['name']=data['info']['expanded'][0]['name']
+    except :
+        pass
     
     return data    

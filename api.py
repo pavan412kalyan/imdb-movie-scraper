@@ -9,6 +9,8 @@ import re
 
 from scrapping_functions import scrapIMDB
 from reviews import scrapeReviews
+from trendingMovies import trendingMovies
+from tvseries_scraper import scrapeTv
 
 #!pip install pymongo
 #!pip install dnspython
@@ -94,11 +96,37 @@ def ScrapMovieNow(id):
 def scrapeReviewsNow(id):
     #sort=helpfulnessScore&dir=desc&ratingFilter=0
     sort = request.args.get('sort') 
+    if sort == None :
+        sort="totalVotes"    
+    
     ratingFilter = request.args.get('ratingFilter')
+    if ratingFilter == None :
+        ratingFilter=0   
+        
     dir = request.args.get('dir')
+    if dir == None :
+        dir="desc"  
     data = scrapeReviews(id,sort,ratingFilter,dir)
+    
     data["_id"]=id
     return jsonify(data)
+
+
+
+
+@app.route('/api/livescraper/trendingIndia/<lan>', methods=['GET'])
+def trendingIndia(lan):
+    data =trendingMovies(lan)
+    return jsonify(data)
+    
+
+ 
+@app.route('/api/livescraper/tv/<id>', methods=['GET'])
+def scrapeTvshow(id):
+    data =scrapeTv(id)
+    return jsonify(data)
+    
+
 
 
 app.run()
