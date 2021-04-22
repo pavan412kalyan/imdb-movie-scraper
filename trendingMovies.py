@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #https://www.imdb.com/title/tt10872600/keywords
+##this is for scrapping trendnig movies  in india and lan is must - takes default as telugu
+
 import requests
 from bs4 import BeautifulSoup
 import re

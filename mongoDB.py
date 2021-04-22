@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#for pushing documnets into MongoDb Atlas cluster
+#for pushing documnets into MongoDb Atlas cluster if files are availble in your local folder
 
 
 import pymongo

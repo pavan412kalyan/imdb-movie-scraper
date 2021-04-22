@@ -1,6 +1,6 @@
 
 #FLASK_APP='api.app' flask routes
-
+!pip install pymongo[srv] for mongodb
 
 ScrapMovieNow     GET      /api/livescraper/movie/<id>
 SearchById        GET      /api/imdbid/<id>

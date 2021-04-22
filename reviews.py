@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# this is for scraping reviews given imdb id - also with filters from api urls
+
 import requests
 from bs4 import BeautifulSoup
 import re

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+##this code is for pushing the data to mongodb after live scraping from the imdb ids placed pending.csv 
 
 import requests
 from bs4 import BeautifulSoup
@@ -196,8 +198,6 @@ def scrapIMDB(ImdbId) :
     data['images'] = getImages(ImdbId)
     data['info']    = getMovieDetails(ImdbId)
     data['crew_data'] =  getCrewData(ImdbId)
-    data['name']=""
-
     try:
         if 'name' in data['info']['expanded'][0] :
             data['name']=data['info']['expanded'][0]['name']
@@ -208,31 +208,67 @@ def scrapIMDB(ImdbId) :
     
 
 
-
-#id="tt5074352"
-#data=scrapIMDB(id)
-#with open(id +'.json', 'w') as json_file:  
-#    json.dump(data, json_file)
-
-
-#ids = ["tt5074352","tt6980546","tt7838158","tt7465992","tt2631186","tt7392212"]
-
 import pandas as pd
-ids =pd.read_csv('imdbids.csv').iloc[:,0]
-ids = list(ids)
+ids =pd.read_csv('pending.csv').iloc[:,0]
+idList=ids
 
-listId=ids
 
-#ids=['tt12735856', 'tt14423288', 'tt2033326', 'tt1360859', 'tt0309290', 'tt0363535', 'tt0263709', 'tt1579694', 'tt9670480', 'tt0810364']
 
-#listId=['tt1846700']
-count=0
-for id in listId :
-  print(id)  
-  data=scrapIMDB(id)
-  with open('dataset/'+id +'.json', 'w') as json_file:
-      json.dump(data, json_file)
-  print(count)
-  count=count+1    
+
+import pymongo
+from pymongo import MongoClient
+#!pip install pymongo
+
+#!pip install dnspython
+#cluster movie
+#db movie-db
+#collection teluguImdb
+
+#https://cloud.mongodb.com/v2/607c99e3d1949f7c3f143127#metrics/replicaSet/607ce0c08d32fa64397040a3/explorer/movie-db/teluguImdb/find
+client = pymongo.MongoClient("mongodb+srv://admin:root@movie-cluster.hvw8d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+db = client["movie-db"]
+collection = db["indiaImdb"]
+
+
+##batch push
+lst=idList
+n=100
+llistOflist=[lst[i:i + n] for i in range(0, len(lst), n)]
+
+
+#batch
+for list_id in llistOflist :
+  data_many=[]
+  for id in list_id:
+    try :
+      data=scrapIMDB(id)
+      data_many.append(data)
+    except Exception as e: 
+          print(e)
+          print("--"+id)
+  try :
+    collection.insert_many(data_many)
+    print('sent batch')
+  except Exception as e: 
+          print(e)
+          print(data_many)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+##this is to format your dataset that are already scraped which 
+# where placed in dataset folder and the final files are placed in finaldataset folder
 from glob import glob
 
 import json

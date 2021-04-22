@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# -*- coding: utf-8 -*-
+## this is live tv series scrapper which scrapes all the seasons and episodes in it. This is  not imported
+## ignore this 
 
 
 import requests

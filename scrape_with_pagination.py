@@ -1,4 +1,9 @@
 
+
+## this code is for scrapng the list from the urls until the last page(pagination)
+##url ="https://www.imdb.com/search/title/?title_type=feature&languages=hi&view=simple&count=250&start=12000"
+
+
 import requests
 from bs4 import BeautifulSoup
 import re

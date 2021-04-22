@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
+##scraping functions - this is imported in flask main file - api.py
 import requests
 from bs4 import BeautifulSoup
 import re

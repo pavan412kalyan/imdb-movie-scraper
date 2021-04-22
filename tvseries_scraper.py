@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+## this is live tv series scrapper which scrapes all the seasons and episodes in it. This is imported in api.py 
+## Threading is implemented where each seasons is a scraped in  a thread  - scrapes quickly   
 
 import requests
 from bs4 import BeautifulSoup
