@@ -224,8 +224,8 @@ from pymongo import MongoClient
 #db movie-db
 #collection teluguImdb
 
-#https://cloud.mongodb.com/v2/607c99e3d1949f7c3f143127#metrics/replicaSet/607ce0c08d32fa64397040a3/explorer/movie-db/teluguImdb/find
-client = pymongo.MongoClient("mongodb+srv://admin:root@movie-cluster.hvw8d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+#insert mongodb cluster url below
+client = pymongo.MongoClient("")
 db = client["movie-db"]
 collection = db["indiaImdb"]
 
