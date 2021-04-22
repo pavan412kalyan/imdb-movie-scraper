@@ -12,7 +12,8 @@ from pymongo import MongoClient
 #db movie-db
 #collection teluguImdb
 
-client_url="mongodb+srv://admin:root@movie-cluster.hvw8d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+import config
+client_url = config.mongo_db_url
 client = pymongo.MongoClient(client_url)
 db = client["movie-db"]
 collection = db["teluguImdb"]
