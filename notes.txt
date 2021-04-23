@@ -19,6 +19,9 @@ trendingIndia     GET      /api/livescraper/trendingIndia/<lan>
 
 
 
+url for all movies in india
+https://www.imdb.com/search/title/?countries=in&view=simple&sort=moviemeter,desc&count=250
+
 
 https://www.imdb.com/india/telugu/
 https://www.imdb.com/search/title/?title_type=feature&languages=te&sort=user_rating,desc&count=250&start=251&ref_=adv_nxt
