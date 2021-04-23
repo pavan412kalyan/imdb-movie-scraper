@@ -11,6 +11,7 @@ from scrapping_functions import scrapIMDB
 from reviews import scrapeReviews
 from trendingMovies import trendingMovies
 from tvseries_scraper import scrapeTv
+from search_by_titles import scrapelist_title
 
 #!pip install pymongo
 #!pip install dnspython
@@ -125,6 +126,18 @@ def trendingIndia(lan):
 def scrapeTvshow(id):
     data =scrapeTv(id)
     return jsonify(data)
+
+@app.route('/api/livescraper/title/<title>', methods=['GET'])
+def scrapeSearchByTitle(title):
+    count = request.args.get('count') 
+    if count == None :
+        count = 30
+    data = scrapelist_title(title,count)
+    return jsonify(data)
+
+
+
+
     
 
 app.run()
