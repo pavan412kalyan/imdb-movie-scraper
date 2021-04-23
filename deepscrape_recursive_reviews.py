@@ -1,33 +1,23 @@
 # -*- coding: utf-8 -*-
 
-# this is for scraping reviews given imdb id - also with filters from api urls
-
 import requests
 from bs4 import BeautifulSoup
-import re
-import json
-def scrapeReviews(ImdbId,sort="submissionDate",ratingFilter=10,dir="asc") :
+from flask import  jsonify
+
+
+#movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews/_ajax?"+"sort="+sort+"&dir="+dir+"&ratingFilter="+ratingFilter
+
+#movie_url = "https://www.imdb.com/title/tt0944947/reviews/_ajax?"
+ 
+ 
+def scrapeReviews(soup,ImdbId) :  
     
-    try :
-#        movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews?"+"sort="+sort+"&dir="+dir+"&ratingFilter="+ratingFilter
-         movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews/_ajax?"+"sort="+sort+"&dir="+dir+"&ratingFilter="+ratingFilter
-         print(movie_url)
-    except :
-        
-#        movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews"
-         movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews"+"/_ajax"
-        
-    r = requests.get(url=movie_url)
-    # Create a BeautifulSoup object
-    soup = BeautifulSoup(r.text, 'html.parser')
     try :
         reviews = soup.find_all('div',{'class' : 'imdb-user-review'})
     except :
-        pass
-        
+        pass   
     
-    #review = soup.find('div',{'class' : 'imdb-user-review'})
-    
+
     data = {}
     data['ImdbId'] = ImdbId
     reviews_text =[]
@@ -81,7 +71,45 @@ def scrapeReviews(ImdbId,sort="submissionDate",ratingFilter=10,dir="asc") :
             review_imdb['rating_value']  = "" 
         ##########
         reviews_text.append(review_imdb)    
+    
     data['reviews']=reviews_text
     return data
 
-#scarpeReviews(ImdbId)
+
+
+def scrap(movie_url,ImdbId,all_data) :
+    print(movie_url)
+    r = requests.get(url=movie_url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+     
+    data =scrapeReviews(soup,ImdbId) 
+    all_data.append(data)
+    try :
+        pagination_key =soup.find('div',{'class' : 'load-more-data'})['data-key']
+        movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews/_ajax?&paginationKey="+pagination_key
+#        print(movie_url) 
+        scrap(movie_url,ImdbId,all_data)
+    except Exception as e:             
+        print(e)
+        return all_data
+        
+
+    
+def start(ImdbId) :
+     movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews/_ajax?"
+     all_data=[]
+     scrap(movie_url,ImdbId,all_data)
+     reviews= {}
+     reviews['ImdbId']=ImdbId
+     reviews['reviews']=all_data
+     return reviews
+
+x=start("tt0944947")
+import json
+
+with open('dataset/'+"reviews_"+"pavan"+'.json', 'w') as json_file:
+    json.dump(x, json_file)
+
+
+
+

@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 
 def  scrapelist_title(title,count) :
+    count =int(count)
     if count > 250 :
         count = 250
     
