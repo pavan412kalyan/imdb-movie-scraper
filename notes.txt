@@ -1,4 +1,9 @@
 
+
+# images download format check split by @
+
+
+
 #FLASK_APP='api.app' flask routes
 !pip install pymongo[srv] for mongodb
 

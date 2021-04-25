@@ -2,9 +2,10 @@
 import pymongo
 from pymongo import MongoClient
 import flask
-from flask import request, jsonify,render_template
+from flask import request, jsonify,render_template,Response
 import sys
 import re
+from flask import send_file
 
 
 from scrapping_functions import scrapIMDB
@@ -20,7 +21,9 @@ from search_by_titles import scrapelist_title
 #collection teluguImdb
 #pthota3@asu.edu
 #https://cloud.mongodb.com/v2/607c99e3d1949f7c3f143127#metrics/replicaSet/607ce0c08d32fa64397040a3/explorer/movie-db/teluguImdb/find
-client = pymongo.MongoClient("mongodb+srv://admin:root@movie-cluster.hvw8d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+import config
+client_url = config.mongo_db_url
+client = pymongo.MongoClient(client_url)
 db = client["movie-db"]
 collection = db["teluguImdb"]
 
@@ -136,6 +139,28 @@ def scrapeSearchByTitle(title):
     data = scrapelist_title(title,count)
     return jsonify(data)
 
+
+
+
+@app.route('/api/livescraper/download/reviews/<id>', methods=['GET'])
+def scrapeReviewsNowAndDownload(id):
+    #sort=helpfulnessScore&dir=desc&ratingFilter=0
+    sort = request.args.get('sort') 
+    if sort == None :
+        sort="totalVotes"    
+    
+    ratingFilter = request.args.get('ratingFilter')
+    if ratingFilter == None :
+        ratingFilter=0   
+        
+    dir = request.args.get('dir')
+    if dir == None :
+        dir="desc"  
+    data = scrapeReviews(id,sort,ratingFilter,dir)
+    
+    data["_id"]=id
+   
+    return data
 
 
 

@@ -98,7 +98,7 @@ def scrapeTv(imdbID) :
 
 #import time
 #start = time.process_time()
-#ans=scrapeTv("tt0898266")
+#ans=scrapeTv("tt0096697")
 #print(time.process_time() - start)
 #
 #         
