@@ -53,7 +53,7 @@ def download(img_url) :
 
 import uuid
 from threading import Thread
-img=getImages("tt0096697")
+img=getImages("tt0944947")
 
 for i in img['other_images'] : 
     img_url =i['url']

@@ -8,9 +8,6 @@ import uuid
 from threading import Thread
 
 
-
-
-
 def getImages(soup) :
 #  url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
   data= {}
@@ -101,7 +98,7 @@ def startDownload(ImdbId) :
 
 
 
-ImdbId="tt5034838"
+ImdbId="tt0944947"
 startDownload(ImdbId)
 
 
