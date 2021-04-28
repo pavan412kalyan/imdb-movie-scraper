@@ -1,22 +1,25 @@
 
 
 # images download format check split by @
+#python -m pip install -r requirements.txt
 
 
-
-#FLASK_APP='api.app' flask routes
+set FLASK_APP=api.py
+# flask routes
 !pip install pymongo[srv] for mongodb
 
-ScrapMovieNow     GET      /api/livescraper/movie/<id>
-SearchById        GET      /api/imdbid/<id>
-SearchImagesById  GET      /api/images/<id>
-genre             GET      /api/genre/<genre>
-home              GET      /
-movie             GET      /api/movie/<movie>
-scrapeReviewsNow  GET      /api/livescraper/reviews/<id>
-scrapeTvshow      GET      /api/livescraper/tv/<id>
-static            GET      /static/<path:filename>
-trendingIndia     GET      /api/livescraper/trendingIndia/<lan>
+ScrapMovieNow                GET      /api/livescraper/movie/<id>
+SearchById                   GET      /api/imdbid/<id>
+SearchImagesById             GET      /api/images/<id>
+genre                        GET      /api/genre/<genre>
+home                         GET      /
+movie                        GET      /api/movie/<movie>
+scrapeReviewsNow             GET      /api/livescraper/reviews/<id>
+scrapeReviewsNowAndDownload  GET      /api/livescraper/download/reviews/<id>
+scrapeSearchByTitle          GET      /api/livescraper/title/<title>
+scrapeTvshow                 GET      /api/livescraper/tv/<id>
+static                       GET      /static/<path:filename>
+trendingIndia                GET      /api/livescraper/trendingIndia/<lan>
 
 
 
