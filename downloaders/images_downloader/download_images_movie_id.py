@@ -4,7 +4,8 @@ from flask import request
 import requests
 from bs4 import BeautifulSoup
 import re
-
+import uuid
+from threading import Thread
 def getImages(ImdbId) :
   url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
   data= {}
@@ -51,24 +52,24 @@ def download(img_url) :
         f.write(r.content)
 
 
-import uuid
-from threading import Thread
-img=getImages("tt0944947")
-
-for i in img['other_images'] : 
-    img_url =i['url']
-    print(img_url)
-    img_url = img_url.split(".")
-    img_url = "https://m.media-amazon." + img_url[2]+"."
-    print(img_url)
+def start(ImdbId) :
+    img=getImages(ImdbId)
+    for i in img['other_images'] : 
+        img_url =i['url']
+        print(img_url)
+        img_url = img_url.split(".")
+        img_url = "https://m.media-amazon." + img_url[2]+"."
+        print(img_url)
+        
+#        threads = []
+        process = Thread(target=download, args=[img_url])
+        process.start()
+    #    threads.append(process)
     
-    threads = []
-    process = Thread(target=download, args=[img_url])
-    process.start()
-#    threads.append(process)
+#    for process in threads:
+#        process.join()
 
-for process in threads:
-    process.join()
+start("tt0944947")
 #    
 #
 #s="https://m.media-amazon.com/images/M/MV5BM2ZjMjBmZjktNTRhMS00YWQwLWIzZTQtZmE1ODU1NDYwMGE2XkEyXkFqcGdeQXVyNjY1MTg4Mzc@._V1_UY99_CR68,0,99,99_AL_.jpg"

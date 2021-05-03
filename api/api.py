@@ -6,13 +6,18 @@ from flask import request, jsonify,render_template,Response
 import sys
 import re
 from flask import send_file
-
+import json
 
 from scrapping_functions import scrapIMDB
 from reviews import scrapeReviews
 from trendingMovies import trendingMovies
 from tvseries_scraper import scrapeTv
 from search_by_titles import scrapelist_title
+
+
+
+
+
 
 #!pip install pymongo
 #!pip install dnspython
@@ -159,8 +164,28 @@ def scrapeReviewsNowAndDownload(id):
     data = scrapeReviews(id,sort,ratingFilter,dir)
     
     data["_id"]=id
+    
+    
+    return Response(
+        json.dumps(data),
+        mimetype="application/json",
+        headers={"Content-disposition":
+                 "attachment; filename="+id+".json"})
+
+    
+    
+@app.route('/api/livescraper/download/tv/<id>', methods=['GET'])
+def scrapeTvshowAndDownload(id):
+    data =scrapeTv(id)
+    data["_id"]=id
+
+    return Response(
+        json.dumps(data),
+        mimetype="application/json",
+        headers={"Content-disposition":
+                 "attachment; filename="+id+".json"})   
    
-    return data
+#    return data
 
 
 
