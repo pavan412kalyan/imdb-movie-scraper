@@ -1,23 +1,163 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>API</title>
+<title>IMDB API</title>
+<style>
+#document {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#document td, #document th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#document tr:nth-child(even){background-color: #f2f2f2;}
+
+#document tr:hover {background-color: #ddd;}
+
+#document th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+</style>
+
 </head>
+
 <body>
+<h1>Documentation </h1>
 
-<code>
-REST end points 
+  <h3 >https://www.imdb.com/title/<span style="color: red">tt0944947</span>  ----- IMDB Id
+ </h3> 
 
-ScrapMovieNow     GET      /api/livescraper/movie/ImdbId  <br>
-SearchById        GET      /api/imdbid/ImdbId                <br>
-SearchImagesById  GET      /api/images/ImdbId               <br>
-genre             GET      /api/genre/genre              <br>
-home              GET      /                                <br>
-movie             GET      /api/movie/movie                     <br>
-scrapeReviewsNow  GET      /api/livescraper/reviews/ImdbId                <br>
-scrapeTvshow      GET      /api/livescraper/tv/ImdbId                           <br>
-static            GET      /static/<path:filename>                            <br>
-trendingIndia     GET      /api/livescraper/trendingIndia/lan      
-</code>
+
+<h2>Static IMDB Data</h2> 
+<table id="document">
+  <tr>
+    <th>Endpoint</th>
+    <th>Methods</th>
+    <th>Rule</th>
+        <th>Example</th>
+
+  </tr>
+  <tr>
+ 
+  <tr>
+    <td>SearchById</td>
+    <td>GET </td>
+    <td> /api/imdbid/{imdbid} </td>
+    <td> <a href="/api/imdbid/tt2631186" target="_blank">/api/imdbid/tt2631186</a></td>
+
+  </tr>
+  
+    <tr>
+    <td>Search Movie by Name</td>
+    <td>GET </td>
+    <td> /api/movie/{movie} </td>
+        <td> <a href="/api/movie/king" target="_blank">/api/movie/king</a></td>
+
+
+  </tr>
+  
+   
+  <tr>
+    <td>SearchImagesById</td>
+    <td>GET </td>
+    <td>/api/images/{ImdbId}  </td>
+            <td> <a href="/api/images/tt2631186" target="_blank">/api/images/tt2631186</a></td>
+
+
+  </tr> 
+  <tr>
+    <td>Search by genre   </td>
+    <td>GET </td>
+    <td>/api/genre/{genre}  </td>
+
+  </tr> 
+  </table>
+    <br>
+<h2>Live Scrape IMDB API - Scrapes data from IMDB website on request </h2>
+<table id="document">
+    <tr>
+    <th>Endpoint</th>
+    <th>Methods</th>
+    <th>Rule</th>
+            <th>Example</th>
+
+  </tr>
+  <tr>
+    <td>scrapeReviewsNow </td>
+    <td>GET </td>
+    <td> api/livescraper/reviews/{ImdbId} </td>
+        <td> <a href="api/livescraper/reviews/tt0068646" target="_blank">api/livescraper/reviews/tt0068646</a></td>
+
+
+  </tr> 
+  <tr>
+    <td>scrapeSearchByTitle     </td>
+    <td>GET </td>
+    <td>/api/livescraper/title/{title}?count=20 </td>
+    <td> <a href="api/livescraper/title/game?count=20" target="_blank">api/livescraper/title/game?count=20</a></td>
+
+    
+
+  </tr> 
+  <tr>
+    <td>ScrapMovieNow   </td>
+    <td>GET </td>
+    <td> /api/livescraper/movie/{ImdbId}</td>
+        <td> <a href="/api/livescraper/movie/tt0068646" target="_blank">/api/livescraper/movie/tt0068646</a></td>
+
+
+  </tr> 
+  <tr>
+    <td>scrapeTvshow       </td>
+    <td>GET </td>
+    <td>/api/livescraper/tv/{ImdbId}   </td>
+    <td> <a href="/api/livescraper/tv/tt0944947" target="_blank">/api/livescraper/tv/tt0944947</a></td>
+
+  </tr>
+  
+    <tr>
+    <td>scrapeReviewsNowAndDownload        </td>
+    <td>GET </td>
+    <td> /api/livescraper/download/reviews/{ImdbId}?sort=helpfulnessScore&dir=desc&ratingFilter=0 </td>
+        <td> <a href="/api/livescraper/download/reviews/tt0944947" target="_blank">/api/livescraper/download/reviews/tt0944947</a></td>
+
+    
+  </tr>
+  
+   <tr>
+    <td>scrapeTvshowAndDownload        </td>
+    <td>GET </td>
+    <td> /api/livescraper/download/tv/{ImdbId}</td>
+        <td> <a href="/api/livescraper/download/tv/tt0944947" target="_blank">/api/livescraper/download/tv/tt0944947</a></td>
+
+  </tr>
+  
+    <tr>
+    <td>trendingIndia        </td>
+    <td>GET </td>
+    <td> /api/livescraper/trendingIndia/{lan}</td>
+            <td> <a href="/api/livescraper/trendingIndia/telugu" target="_blank">/api/livescraper/trendingIndia/telugu</a>  lan= telugu,tamil,upcoming</td>
+
+  </tr>
+  
+  
+  
+</table>
+
+<p><h3> For Downloading Movie/Tv <a href="https://www.imdb.com/search/title/?title_type=feature&languages=hi" target="_blank">Lists</a>,
+ <a href="https://www.imdb.com/title/tt0944947/mediaindex" target="_blank">Images </a>,<a href="https://www.imdb.com/title/tt6723592/videogallery" target="_blank"> All Videos </a>,
+  <a href="https://www.imdb.com/title/tt6723592/reviews" target="_blank"> All Reviews for a movie/Tv clone </a> : <h3> 
+<a href="https://github.com/pavan412kalyan/imdb-movie-scraper/tree/main/downloaders" target="_blank">  my github here <a/>
+</p> 
+
+
 </body>
 </html>

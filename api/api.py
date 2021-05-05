@@ -69,6 +69,11 @@ app.config["DEBUG"] = True
 def home():
     return render_template('home.html')
 
+@app.route('/api', methods=['GET'])
+def api():
+    return render_template('home.html')
+
+
 
 @app.route('/api/movie/<movie>', methods=['GET'])
 def movie(movie):
@@ -138,7 +143,7 @@ def scrapeTvshow(id):
 @app.route('/api/livescraper/title/<title>', methods=['GET'])
 def scrapeSearchByTitle(title):
     count = request.args.get('count') 
-    count=int(count)
+    #count=int(count)
     if count == None :
         count = 30
     data = scrapelist_title(title,count)
@@ -191,4 +196,5 @@ def scrapeTvshowAndDownload(id):
 
     
 
-app.run()
+if __name__ == '__main__':
+   app.run()

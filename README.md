@@ -4,6 +4,7 @@ This repo is for
    a) Static data  - hosted on MongoDB <br>
    b) Dynamic data - scraping from Imdb on Request
   
+ ###  Link for API and documentation: https://imdb-rest-api.herokuapp.com/
   
    Download Content     |   
    --------------       | 
