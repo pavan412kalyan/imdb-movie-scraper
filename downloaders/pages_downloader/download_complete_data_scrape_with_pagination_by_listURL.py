@@ -25,7 +25,15 @@ def  scrapelist(soup) :
         except Exception as e: 
             print(e)     
         
-          
+        #poster_url
+        try :
+            img_url=t.findAll('a')[0].find('img')['loadlate']
+            img_url = img_url.split(".")
+            img_url = "https://m.media-amazon." + img_url[2]+"."
+            movie_block['poster_url']=img_url
+        except:
+            movie_block['poster_url']=""
+
         try :
            block= t.find('div',{"class" : "lister-item-content" })
            movie_block['year']=block.find('span',{"class" : "lister-item-year text-muted unbold" }).text[1:-1]
@@ -91,10 +99,10 @@ def  scrapelist(soup) :
     with open('pages/'+unique_filename +'.json', 'w') as json_file:
         json.dump(movie_list, json_file)
              
-#    your_list=ids
-#    df = DataFrame (your_list)
-#    unique_filename = str(uuid.uuid4())
-#    df.to_csv("pages/"+ unique_filename+".csv" ,index=False)        
+    your_list=ids
+    df = DataFrame (your_list)
+    #unique_filename = str(uuid.uuid4())
+    df.to_csv("pagesId/"+ unique_filename+".csv" ,index=False)        
     
 
 def start_pagination(next_page) :
@@ -133,4 +141,4 @@ def start(pageurl) :
 #   else :
 #        print('enter arguments --> python https://www.imdb.com/search/title/?title_type=feature&languages=te&view=simple&count=250 ')
 #
-start("https://www.imdb.com/search/title/?title_type=feature&languages=te&count=250")   
+start("https://www.imdb.com/search/title/?countries=in&count=250")   
