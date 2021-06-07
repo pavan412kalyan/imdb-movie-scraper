@@ -16,7 +16,8 @@ def getMovieDetails(imdbID):
     jsonData = soup.find('script',{"type":"application/ld+json"})
     #print(jsonData.string)
     Moredata=[]
-    Moredata.append(json.loads(jsonData.string))
+    jsonSourceObj=json.loads(jsonData.string)
+    Moredata.append(jsonSourceObj)
     data["expanded"]=Moredata
 
     
@@ -35,60 +36,90 @@ def getMovieDetails(imdbID):
 
 
     #RunTime
-    data["RunTime"]=""
+#    data["RunTime"]=""
     data["Minutes"]=""
-    runTime = soup.find("time")
-    if runTime!= None :
-      data["RunTime"]=runTime.string.strip()
-      data["Minutes"]=runTime['datetime']
-
-
+#    runTime = soup.find("time")
+#    if runTime!= None :
+#      data["RunTime"]=runTime.string.strip()
+#      data["Minutes"]=runTime['datetime']
+    
+    try :
+        data["Minutes"]=jsonSourceObj['duration']
+    except :
+        data["Minutes"]=""
 
 
 
     # rating
     data["ratingValue"]=""
-    ratingValue = soup.find("span", {"itemprop" : "ratingValue"})
-    if ratingValue!= None :
-        data["ratingValue"] = ratingValue.string
+#    ratingValue = soup.find("span", {"itemprop" : "ratingValue"})
+#    if ratingValue!= None :
+#        data["ratingValue"] = ratingValue.string
+    try : 
+         data["ratingValue"]= jsonSourceObj['aggregateRating']['ratingValue']
+    except :
+        data["ratingValue"]=""
+
+    
+    
 
     # no of rating given
     data["ratingCount"] =""
-    ratingCount = soup.find("span", {"itemprop" : "ratingCount"})
-    if ratingCount!= None  :
-        data["ratingCount"] = ratingCount.string
+#    ratingCount = soup.find("span", {"itemprop" : "ratingCount"})
+#    if ratingCount!= None  :
+#        data["ratingCount"] = ratingCount.string
+    
+    try : 
+         data["ratingCount"]= jsonSourceObj['aggregateRating']['ratingCount']
+    except :
+        data["ratingCount"]=""
+    
 
     # name
-    data["name"]=""
-    titleName = soup.find("div",{'class':'titleBar'}).find("h1")
-    if titleName!= None :
-        data["name"] = titleName.contents[0].replace(u'\xa0', u'')
+#    data["name"]=""
+#    titleName = soup.find("div",{'class':'titleBar'}).find("h1")
+#    if titleName!= None :
+#        data["name"] = titleName.contents[0].replace(u'\xa0', u'')
 
     # additional details
-    subtext = soup.find("div",{'class':'subtext'})
-    data["subtext"] = ""
-    for i in subtext.contents:
-        data["subtext"] += i.string.strip()
+#    subtext = soup.find("div",{'class':'subtext'})
+#    data["subtext"] = ""
+#    for i in subtext.contents:
+#        data["subtext"] += i.string.strip()
 
     # summary
-    summary_text = soup.find("div",{'class':'summary_text'})
+#    summary_text = soup.find("div",{'class':'summary_text'})
    # print(summary_text)
-    if summary_text!=None and summary_text.string != None :
-      data["summary_text"] = summary_text.string.strip()
-    else :
-      data["summary_text"]=""
-    credit_summary_item = soup.find_all("div",{'class':'credit_summary_item'})
-    data["credits"] = {}
-    for i in credit_summary_item:
-        item = i.find("h4")
-        names = i.find_all("a")
-        data["credits"][item.string] = []
-        for i in names:
-            data["credits"][item.string].append({
-                "link": i["href"],
-                "name": i.string
-            })
+#    if summary_text!=None and summary_text.string != None :
+#      data["summary_text"] = summary_text.string.strip()
+#    else :
+#      data["summary_text"]=""
+    try : 
+         data["summary_text"]= jsonSourceObj['description']
+    except :
+        data["summary_text"]=""    
+    
+    
+    
+#    credit_summary_item = soup.find_all("div",{'class':'credit_summary_item'})
+#    data["credits"] = {}
+#    for i in credit_summary_item:
+#        item = i.find("h4")
+#        names = i.find_all("a")
+#        data["credits"][item.string] = []
+#        for i in names:
+#            data["credits"][item.string].append({
+#                "link": i["href"],
+#                "name": i.string
+#            })
 
+    try: 
+        data['keywords']=jsonSourceObj['keywords']
+    
+    except :
+         data['keywords']=""
+    
+    
     return data
 
 #getMovieDetails('tt2794386')
