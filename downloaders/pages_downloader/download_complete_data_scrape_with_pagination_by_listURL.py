@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 from pandas import DataFrame
-import uuid
+import uuid,os
 import sys
 
 def  scrapelist(soup) :
@@ -124,6 +124,10 @@ def start_pagination(next_page) :
                 break
 
 def start(pageurl) :
+    os.makedirs("pages", exist_ok=True)
+    os.makedirs("pagesId", exist_ok=True)
+
+
 #    imdb = "https://www.imdb.com"
 #    query= "?title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,video_game,short,video,tv_short&languages=te&view=simple&sort=moviemeter,asc&count=250"
 #    

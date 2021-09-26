@@ -3,9 +3,10 @@
 from flask import request
 import requests
 from bs4 import BeautifulSoup
-import re
+import re,os
 import uuid
 from threading import Thread
+
 def getImages(ImdbId) :
   url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
   data= {}
@@ -54,6 +55,8 @@ def download(img_url) :
 
 def start(ImdbId) :
     img=getImages(ImdbId)
+    print("Creating folder")
+    os.makedirs("images", exist_ok=True) 
     for i in img['other_images'] : 
         img_url =i['url']
         print(img_url)

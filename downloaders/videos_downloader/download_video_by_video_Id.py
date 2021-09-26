@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 from bs4 import BeautifulSoup
-import re
+import re,os
 import uuid
 from urllib.request import urlopen
 
@@ -69,6 +69,8 @@ def scrapeVidPage(video_id) :
 
     
 def start_download(video_id) :
+    os.makedirs("videos", exist_ok=True)
+
     video_url =scrapeVidPage(video_id)
     download(video_url,video_id)
 

@@ -1,7 +1,7 @@
 
 import requests
 from bs4 import BeautifulSoup
-import re
+import re,os
 import json
 import pandas as pd
 
@@ -256,6 +256,8 @@ def scrapIMDB(ImdbId) :
 
 
 def start_scrap(ids_file) :
+    print("Creating folder")
+    os.makedirs("movies", exist_ok=True) 
     ids =pd.read_csv(ids_file).iloc[:,0]
     ids = list(ids)
     listId=ids

@@ -3,7 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pandas import DataFrame
-import uuid,sys
+import uuid,sys,os
 
 
 
@@ -40,6 +40,7 @@ def scrapechart(soup) :
 
 
 def scrape(url) :
+    os.makedirs("charts", exist_ok=True)
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     scrapechart(soup)

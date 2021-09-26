@@ -3,7 +3,7 @@
 from flask import request
 import requests
 from bs4 import BeautifulSoup
-import re
+import re,os
 import uuid
 from threading import Thread
 
@@ -102,7 +102,8 @@ def startDownload(ImdbId,limit) :
     imdb_domain = "https://www.imdb.com" 
     url = "https://www.imdb.com/title/"+ImdbId+"/videogallery"
     next_page=url
-    
+    os.makedirs("videos", exist_ok=True)
+
     while next_page!="" :
             print(next_page)
             r = requests.get(url=next_page)

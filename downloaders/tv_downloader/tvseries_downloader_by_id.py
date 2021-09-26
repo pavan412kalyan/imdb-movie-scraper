@@ -5,7 +5,7 @@
 
 import requests
 from bs4 import BeautifulSoup
-import re
+import re,os
 import json
 import logging
 from threading import Thread
@@ -97,6 +97,8 @@ def scrapeTv(imdbID) :
 
 def start(imdbID) :     
     data=scrapeTv(imdbID)
+    os.makedirs("tv", exist_ok=True)
+
     with open('tv/'+imdbID +'.json', 'w') as json_file:
         json.dump(data, json_file)
 

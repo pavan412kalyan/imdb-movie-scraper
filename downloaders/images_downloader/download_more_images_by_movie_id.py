@@ -2,8 +2,7 @@
 
 import requests
 from bs4 import BeautifulSoup
-import re
-
+import re,os
 import uuid
 from threading import Thread
 
@@ -56,6 +55,8 @@ def download(img_url) :
 
 
 def startDownload(ImdbId) :
+    print("Creating folder")
+    os.makedirs("images", exist_ok=True) 
     imdb_domain = "https://www.imdb.com" 
     url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
     next_page=url

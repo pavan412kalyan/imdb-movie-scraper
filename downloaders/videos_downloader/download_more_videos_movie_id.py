@@ -4,7 +4,7 @@
 from flask import request
 import requests
 from bs4 import BeautifulSoup
-import re
+import re,os
 import uuid
 from threading import Thread
 
@@ -108,6 +108,7 @@ def getmp4links(ImdbId,video_id) :
 def download(ImdbId,video_id,video_url) :
     r = requests.get(video_url)
     print("downloading  "+ video_id)
+    os.makedirs("videos", exist_ok=True)
 
     with open('videos/'+ImdbId+'_' + video_id+'.mp4', 'wb') as f:
         f.write(r.content)

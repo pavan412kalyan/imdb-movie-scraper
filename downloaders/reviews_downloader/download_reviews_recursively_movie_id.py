@@ -3,7 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from flask import  jsonify
-import json
+import json,os
 
 
 #movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews/_ajax?"+"sort="+sort+"&dir="+dir+"&ratingFilter="+ratingFilter
@@ -109,6 +109,7 @@ def start_scraping(ImdbId) :
 
 def start(ImdbId) :
     data = start_scraping(ImdbId)
+    os.makedirs("reviews", exist_ok=True)
     with open('reviews/'+"reviews_"+ImdbId+'.json', 'w') as json_file:
         json.dump(data, json_file)
 

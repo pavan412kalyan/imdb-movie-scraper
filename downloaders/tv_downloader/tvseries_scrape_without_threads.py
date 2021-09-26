@@ -5,7 +5,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-import json
+import json,os
 
 
 def scrapSeason(imdbID,season_no) :
