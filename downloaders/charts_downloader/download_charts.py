@@ -41,8 +41,8 @@ def scrape(url) :
     scrapechart(soup)
 
 
-
-url="https://www.imdb.com/india/top-rated-indian-movies/?pf_rd_m=A2FGELUUNOQJNL&pf_rd_p=4da9d9a5-d299-43f2-9c53-f0efa18182cd&pf_rd_r=6K4T71CDNA8G26TF3J3S&pf_rd_s=right-4&pf_rd_t=15506&pf_rd_i=toptv&ref_=chttvtp_ql_7"
+#url="https://www.imdb.com/india/top-rated-indian-movies/?pf_rd_m=A2FGELUUNOQJNL&pf_rd_p=4da9d9a5-d299-43f2-9c53-f0efa18182cd&pf_rd_r=6K4T71CDNA8G26TF3J3S&pf_rd_s=right-4&pf_rd_t=15506&pf_rd_i=toptv&ref_=chttvtp_ql_7"
+url='https://www.imdb.com/chart/top/'
 scrape(url)
 
 

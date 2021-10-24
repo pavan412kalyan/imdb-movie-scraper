@@ -6,7 +6,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pandas import DataFrame
-import uuid,sys
+import uuid,sys,os
 
 
 def  scrapelist(soup) :
@@ -48,7 +48,9 @@ def start_pagination(next_page) :
 def start(pageurl) :
     imdb = "https://www.imdb.com"
     query= "?title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,video_game,short,video,tv_short&languages=te&view=simple&sort=moviemeter,asc&count=250"
-    
+    os.makedirs("pages", exist_ok=True)
+    os.makedirs("pagesId", exist_ok=True)
+
     url=imdb+query
     #url="https://www.imdb.com/search/title/?genres=western&countries=ad&languages=icl&view=simple&count=250"
 #    url="https://www.imdb.com/search/title/?title_type=feature&languages=te&view=simple&count=250"
@@ -64,4 +66,4 @@ def start(pageurl) :
 #   else :
 #        print('enter arguments --> python https://www.imdb.com/search/title/?title_type=feature&languages=te&view=simple&count=250 ')
 #        
-start("https://www.imdb.com/search/title/?title_type=feature&languages=te&view=simple&count=250")   
+start("https://www.imdb.com/search/title/?title_type=feature&sort=num_votes,desc&count=250&view=simple")   
