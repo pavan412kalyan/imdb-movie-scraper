@@ -1,4 +1,0 @@
-https://github.com/pavan412kalyan/imdb-movie-scraper/tree/main/downloaders/pages_downloader
-https://github.com/pavan412kalyan/imdb-movie-scraper/tree/main/downloaders/charts_downloader
-
-html tags on the pages changed/update for the above , fix the code
