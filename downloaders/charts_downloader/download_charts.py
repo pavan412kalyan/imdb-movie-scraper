@@ -3,12 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pandas import DataFrame
-import uuid,sys,os
-
-
-
-
-
+import uuid,sys,os,json
 
 def scrapechart(soup) :
     blocks =[]
@@ -44,8 +39,6 @@ def scrape(url) :
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     scrapechart(soup)
-
-
 
 
 
