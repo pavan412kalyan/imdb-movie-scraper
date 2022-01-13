@@ -67,4 +67,4 @@ def load(ImdbId) :
         print(e)
     
     
-start(file_ids='imdbids.csv')              
+start(file_ids='top250.csv')              

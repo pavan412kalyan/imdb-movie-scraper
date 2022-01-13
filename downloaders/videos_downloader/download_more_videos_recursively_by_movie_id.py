@@ -62,7 +62,7 @@ def getmp4links(video_id,ImdbId) :
     #print(v[2].text)
     script=v[2]
 
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', script.text)
+    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
 #    print(urls) 
 
     for x in urls :

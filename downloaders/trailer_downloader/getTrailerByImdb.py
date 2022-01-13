@@ -84,7 +84,7 @@ def scrapeVidPage(video_id) :
     #print(v[2].text)
     script=v[2]
 
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', script.text)
+    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
 #    print(urls) 
 
     for x in urls :
@@ -121,6 +121,7 @@ def start_trailer_download(imdbID):
     with open(f'trailers/{imdbID}/'+imdbID +'.json', 'w') as json_file:
         json.dump(movie, json_file)
     video_id_trailer = movie['trailer_vid']
+    print("trailer_video_id",video_id_trailer)
     start_download(video_id=video_id_trailer,imdbID=imdbID)
     thumb_url =movie['image'] 
     start_image_download(thumb_url,imdbID)
@@ -146,7 +147,7 @@ def start(file_ids) :
     '''     
 #start_trailer_download(imdbID='tt1160419')
 
-start(file_ids='imdbids.csv') 
+start(file_ids='top250.csv') 
 
 
 
