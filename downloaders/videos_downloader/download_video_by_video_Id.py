@@ -50,7 +50,7 @@ def scrapeVidPage(video_id) :
     #print(v[2].text)
     script=v[2]
 
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', script.text)
+    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
 #    print(urls) 
 
     for x in urls :
@@ -74,7 +74,7 @@ def start_download(video_id) :
     video_url =scrapeVidPage(video_id)
     download(video_url,video_id)
 
-video_id="vi1352056089"
+video_id="vi3986080537"
 start_download(video_id)
 
     

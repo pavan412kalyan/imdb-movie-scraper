@@ -82,7 +82,7 @@ def getmp4links(ImdbId,video_id) :
     #print(v[2].text)
     script=v[2]
 
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', script.text)
+    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
 #    print(urls) 
 
     for x in urls :
@@ -116,6 +116,7 @@ def download(ImdbId,video_id,video_url) :
 
     
 start(ImdbId="tt6723592",limit=40)
+#tt1160419
 #video_url =scrapeVidPage("vi3877612057")
 #download(video_url)
 
