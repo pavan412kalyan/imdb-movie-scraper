@@ -3,7 +3,7 @@
 # images download format check split by @
 #python -m pip install -r requirements.txt
 
-
+---
 set FLASK_APP=api.py
 # flask routes
 !pip install pymongo[srv] for mongodb
