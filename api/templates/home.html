@@ -26,7 +26,17 @@
   color: white;
 }
 </style>
-
+<!-- Hotjar Tracking Code for https://imdb-rest-api.herokuapp.com/ -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2388161,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
 </head>
 
 <body>
@@ -36,50 +46,6 @@
  </h3> 
 
 
-<h2>Static IMDB Data</h2> 
-<table id="document">
-  <tr>
-    <th>Endpoint</th>
-    <th>Methods</th>
-    <th>Rule</th>
-        <th>Example</th>
-
-  </tr>
-  <tr>
- 
-  <tr>
-    <td>SearchById</td>
-    <td>GET </td>
-    <td> /api/imdbid/{imdbid} </td>
-    <td> <a href="/api/imdbid/tt2631186" target="_blank">/api/imdbid/tt2631186</a></td>
-
-  </tr>
-  
-    <tr>
-    <td>Search Movie by Name</td>
-    <td>GET </td>
-    <td> /api/movie/{movie} </td>
-        <td> <a href="/api/movie/king" target="_blank">/api/movie/king</a></td>
-
-
-  </tr>
-  
-   
-  <tr>
-    <td>SearchImagesById</td>
-    <td>GET </td>
-    <td>/api/images/{ImdbId}  </td>
-            <td> <a href="/api/images/tt2631186" target="_blank">/api/images/tt2631186</a></td>
-
-
-  </tr> 
-  <tr>
-    <td>Search by genre   </td>
-    <td>GET </td>
-    <td>/api/genre/{genre}  </td>
-
-  </tr> 
-  </table>
     <br>
 <h2>Live Scrape IMDB API - Scrapes data from IMDB website on request </h2>
 <table id="document">
@@ -152,11 +118,78 @@
   
 </table>
 
+
+
 <p><h3> For Downloading Movie/Tv <a href="https://www.imdb.com/search/title/?title_type=feature&languages=hi" target="_blank">Lists</a>,
- <a href="https://www.imdb.com/title/tt0944947/mediaindex" target="_blank">Images </a>,<a href="https://www.imdb.com/title/tt6723592/videogallery" target="_blank"> All Videos </a>,
-  <a href="https://www.imdb.com/title/tt6723592/reviews" target="_blank"> All Reviews for a movie/Tv clone </a> : <h3> 
-<a href="https://github.com/pavan412kalyan/imdb-movie-scraper/tree/main/downloaders" target="_blank">  my github here <a/>
+ <a href="https://www.imdb.com/title/tt0944947/mediaindex" target="_blank"> Images </a>,<a href="https://www.imdb.com/title/tt6723592/videogallery" target="_blank"> All Trailers </a>,
+  <a href="https://www.imdb.com/title/tt6723592/reviews" target="_blank"> All Reviews for a movie/Tv  </a> : <h3> 
+<a href="https://github.com/pavan412kalyan/imdb-movie-scraper/tree/main/downloaders" target="_blank">   clone my github here <a/>
 </p> 
+
+
+
+
+
+
+
+ <a href="https://www.kaggle.com/pavan4kalyan/imdb-dataset-of-600k-international-movies" target="_blank"> Kaggle Dataset for 600k International Movies </a>
+
+
+
+
+
+<h2>Static IMDB Data(16000 Indian Movies)</h2> 
+<table id="document">
+  <tr>
+    <th>Endpoint</th>
+    <th>Methods</th>
+    <th>Rule</th>
+        <th>Example</th>
+
+  </tr>
+  <tr>
+ 
+  <tr>
+    <td>SearchById</td>
+    <td>GET </td>
+    <td> /api/imdbid/{imdbid} </td>
+    <td> <a href="/api/imdbid/tt8291224" target="_blank">/api/imdbid/tt8291224</a></td>
+
+  </tr>
+  
+    <tr>
+    <td>Search Movie by Name</td>
+    <td>GET </td>
+    <td> /api/movie/{movie} </td>
+        <td> <a href="/api/movie/king" target="_blank">/api/movie/king</a></td>
+
+
+  </tr>
+  
+   
+  <tr>
+    <td>SearchImagesById</td>
+    <td>GET </td>
+    <td>/api/images/{ImdbId}  </td>
+            <td> <a href="/api/images/tt8291224" target="_blank">/api/images/tt8291224</a></td>
+
+
+  </tr> 
+  <tr>
+    <td>Search by genre   </td>
+    <td>GET </td>
+    <td>/api/genre/{genre}  </td>
+
+  </tr> 
+  </table>
+
+
+
+
+
+
+
+
 
 
 </body>
