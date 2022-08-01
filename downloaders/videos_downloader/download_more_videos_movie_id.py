@@ -74,33 +74,21 @@ def start(ImdbId,limit=10) :
 
 def getmp4links(ImdbId,video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
-#    print(video_url)
+    print(video_url)
     r = requests.get(url=video_url)
     soup = BeautifulSoup(r.text, 'html.parser')
-    v =soup.findAll("script",{'type': 'text/javascript'})
+    script =soup.find("script",{'type': 'application/json'})
+    json_object = json.loads(script.string)
+    print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
+    videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]
+    # links video quality order auto,1080,720
 
-    #print(v[2].text)
-    script=v[2]
-
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
-#    print(urls) 
-
-    for x in urls :
-      if ".mp4" in x :
-        try :
-            z=x.split("url")[4]## HD video
-        except :
-            try :
-                z=x.split("url")[3]  ## SD video
-            except :
-                z=x.split("url")[2]  ## 480p
-
-            
-        link = z.split('\"')[2][:-1]
+    for video in videos[1:] :
+        video_link = video["url"]
+        print(video_link)  
         break
-
-    print(link)
-    download(ImdbId,video_id,link)
+    print(video_link)
+    download(ImdbId,video_id,video_link)
 #    return link
 
 #getmp4links(video_id="vi2922945817")

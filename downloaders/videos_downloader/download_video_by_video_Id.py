@@ -2,7 +2,7 @@
 import requests
 from bs4 import BeautifulSoup
 import re,os
-import uuid
+import uuid,json
 from urllib.request import urlopen
 
 
@@ -38,34 +38,42 @@ def download(video_url,video_id) :
 #    with open('videos/'+unique_filename+'.mp4', 'wb') as f:
 #        f.write(r.content)
 
-
-
 def scrapeVidPage(video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
     r = requests.get(url=video_url)
     soup = BeautifulSoup(r.text, 'html.parser')
-    v =soup.findAll("script",{'type': 'text/javascript'})
+    script =soup.find("script",{'type': 'application/json'})
+    json_object = json.loads(script.string)
+    print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
+    videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]
+    # links video quality order auto,1080,720
 
-    #print(v[2].text)
-    script=v[2]
+    for video in videos[1:] :
+        video_link = video["url"]
+        print(video_link)  
+        break
+    return video_link
 
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
-#    print(urls) 
+    # for x in urls :
+    #     if ".mp4" in x :
+    #         print("###",x,"###")
 
-    for x in urls :
-        if ".mp4" in x :
-            try :
-                z=x.split("url")[4]## HD video
-            except :
-                try :
-                    z=x.split("url")[3]  ## SD video
-                except :
-                    z=x.split("url")[2]  ## 480p
-            link = z.split('\"')[2][:-1]
-            break
-    print(link)
-    return link
+    #         try :
+    #             z=x.split("url")[4]## HD video
+    #         except :
+    #             try :
+    #                 z=x.split("url")[3]  ## SD video
+    #             except :
+    #                 z=x.split("url")[2]  ## 480p
+    #         link = z.split('\"')[2][:-1]
+    #         print("link",link)
+    #         link = link.replace("\\u0026","&")
+
+    #         break
+    # print(link)
+#https://imdb-video.media-imdb.com/vi3986080537/1434659454657-dx9ykf-1633625495700.mp4?Expires=1659393293\u0026Signature=RwcwtTToP13W8ZRBQKELrGQdBP8-iR6Ou70Evj5j1S4VmKl1rm6HvQGxeoOjgUmR3VvwLVfJOJcs2vB-wv-f~uEVAmBgoh~z5z5RJkPvZin8urHTgUR6W1jCFxEGa4S~Lmna7BaL6DG20ljonAjgvvxuS5Mnv2OAxHO7VNY6O~eWLPxmQ4tRXRyb0L3SRpKum9lnJDNL0eVQDin90K9SD9J2Vul-ZjkaOsaDkVGixrrCNeOneDX9AD23GhsUgCOMzp7z90HZcaRuLnJd0SoGc-RqR9jzFWsHIhjHIx50QvUzOL7txwj7g8s6CsLcsZdWdluKlLkgDUaVwr8kBELVSg__\u0026Key-Pair-Id=APKAIFLZBVQZ24NQH3K
+
 
     
 def start_download(video_id) :
@@ -74,7 +82,7 @@ def start_download(video_id) :
     video_url =scrapeVidPage(video_id)
     download(video_url,video_id)
 
-video_id="vi3986080537"
+video_id="vi1143521817"
 start_download(video_id)
 
     

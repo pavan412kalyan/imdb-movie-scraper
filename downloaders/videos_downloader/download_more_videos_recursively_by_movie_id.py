@@ -4,7 +4,7 @@ from flask import request
 import requests
 from bs4 import BeautifulSoup
 import re,os
-import uuid
+import uuid,json
 from threading import Thread
 
 
@@ -53,35 +53,20 @@ def start(soup,ImdbId,limit=30) :
 
 def getmp4links(video_id,ImdbId) :
     video_url= "https://www.imdb.com/video/"+video_id
-#    print(video_url)
     print(video_url)
     r = requests.get(url=video_url)
     soup = BeautifulSoup(r.text, 'html.parser')
-    v =soup.findAll("script",{'type': 'text/javascript'})
+    script =soup.find("script",{'type': 'application/json'})
+    json_object = json.loads(script.string)
+    print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
+    videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]
+    # links video quality order auto,1080,720
 
-    #print(v[2].text)
-    script=v[2]
-
-    urls = re.findall('[a-z]+[:.].*?(?=\s)', str(script)) #changed from script.text to str(script)
-#    print(urls) 
-
-    for x in urls :
-      if ".mp4" in x :
-        try :
-            z=x.split("url")[4]## 3# low defination
-        except :
-            try :
-                z=x.split("url")[3]  # stanard defination
-            except :
-                z=x.split("url")[2] # hd 
-
-            
-        link = z.split('\"')[2][:-1]
+    for video in videos[1:] :
+        video_link = video["url"]
+        print(video_link)  
         break
-
-#    print(link)
-    download(link,video_id,ImdbId)
-#    return link
+    download(video_link,video_id,ImdbId)
 
 #getmp4links(video_id="vi2922945817")
 
@@ -93,9 +78,6 @@ def download(video_url,video_id,ImdbId) :
     with open('videos/'+ImdbId+'_'+video_id+'.mp4', 'wb') as f:
         f.write(r.content)
     print("downloaded"+ video_id)
-
-
-
 
 
 def startDownload(ImdbId,limit) :

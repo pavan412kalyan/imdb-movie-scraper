@@ -45,10 +45,10 @@ def getImages(soup) :
   return data
 
 
-def download(img_url) :
+def download(img_url,ImdbId) :
     r = requests.get(img_url)
     unique_filename = str(uuid.uuid4())
-    with open('images/'+unique_filename+'.JPG', 'wb') as f:
+    with open(f'images/{ImdbId}/'+unique_filename+'.JPG', 'wb') as f:
         f.write(r.content)
 
 
@@ -56,7 +56,7 @@ def download(img_url) :
 
 def startDownload(ImdbId) :
     print("Creating folder")
-    os.makedirs("images", exist_ok=True) 
+    os.makedirs(f"images/{ImdbId}/", exist_ok=True) 
     imdb_domain = "https://www.imdb.com" 
     url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
     next_page=url
@@ -88,7 +88,7 @@ def startDownload(ImdbId) :
 #                    print(img_url)
 #                    threads = []
 
-                    process = Thread(target=download, args=[img_url])
+                    process = Thread(target=download, args=[img_url,ImdbId])
                     process.start()
 #                    threads.append(process)
                 
