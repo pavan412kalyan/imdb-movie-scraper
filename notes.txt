@@ -41,5 +41,32 @@ https://www.imdb.com/search/title/?title_type=feature,tv_movie,tv_series,tv_epis
 https://www.imdb.com/search/title/?title_type=feature,tv_movie,tv_series,tv_episode,tv_special,tv_miniseries,documentary,video_game,short,video,tv_short&languages=te&view=simple&sort=moviemeter,desc&count=250
 
 
+
+##USE google colab to avoid IP block
+
 replace from \u0026 to &
-https://imdb-video.media-imdb.com/vi3986080537/1434659454657-dx9ykf-1633625495700.mp4?Expires=1659322850\u0026Signature=ruS7hZi9ukh5gDSItDqqSSzM4Ac-i9eYnY3XAZiCiBSXg4Bh-hUiISwQjRXLqf7a4gZO4AUoLVZvtdqPGdc401IAx2FpaUaZKoK0aUfWmqPzgrstRwEy-Xw001YHH1afCDJmdh0hwSzKBTUhbcIQY58-akox15---~vYyG5rXiCkJyMEvVKURW~G50omVhXpuE4fUe2Ngi0-RioESGUMjAfTnlLCKKVsNayGsg~Efx8Lu8p5ROX203uFCSbDh1s2hGCs5niCoCbFXL3Y9iVt0xj7i9ZFJdD~OqXRGZV5Li6zEuqghhT7Fg1zn2tvMsk3pcUbDvDSPob~llCrizgexg__\u0026Key-Pair-Id=APKAIFLZBVQZ24NQH3K
+https://imdb-video.media-imdb.com/vi3986080537/1434659454657-dx9ykf-1633625495700.mp4?Expires=1659322850\u0026Signature=ruS7hZi9ukh5gDSItDqqSSzM4Ac-i9eYnY3XAZiCiBSXg4Bh-hUiISwQjRXLqf7a4gZO4AUoLVZvtdqPGdc401IAx2FpaUaZKoK0aUfWmqPzgrstRwEy-Xw001YHH1afCDJmdh0hwSzKBTUhbcIQY58-akox15---~vYyG5rXiCkJyMEvVKURW~G50omVhXpuE4fUe2Ngi0-RioESGUMjAfTnlLCKKVsNayGsg~Efx8Lu8p5ROX203uFCSbDh1s2hGC
+
+
+
+
+
+
+
+
+
+from bs4 import BeautifulSoup
+import requests
+video_url= "https://www.imdb.com/video/"+video_id
+print(video_url)
+r = requests.get(url=video_url)
+soup = BeautifulSoup(r.text, 'html.parser')
+script =soup.find("script",{'type': 'application/json'})
+json_object = json.loads(script.string)
+print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
+videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]
+# links video quality order auto,1080,720
+for video in videos[1:] :
+    video_link = video["url"]
+    print(video_link)  
+    #break

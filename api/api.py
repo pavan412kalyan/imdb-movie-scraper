@@ -2,11 +2,15 @@
 import pymongo
 from pymongo import MongoClient
 import flask
-from flask import request, jsonify,render_template,Response
+from flask import request, jsonify,render_template,Response,redirect
 import sys
 import re
 from flask import send_file
-import json
+import requests
+from bs4 import BeautifulSoup
+import re,os
+import uuid,json
+from urllib.request import urlopen
 
 from scrapping_functions import scrapIMDB
 from reviews import scrapeReviews
@@ -16,6 +20,22 @@ from search_by_titles import scrapelist_title
 
 
 
+def scrapeVidPage(video_id) :
+    video_url= "https://www.imdb.com/video/"+video_id
+    print(video_url)
+    r = requests.get(url=video_url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    script =soup.find("script",{'type': 'application/json'})
+    json_object = json.loads(script.string)
+    print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
+    videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]
+    # links video quality order auto,1080,720
+
+    for video in videos[1:] :
+        video_link = video["url"]
+        print(video_link)  
+        break
+    return videos[1:]
 
 
 
@@ -188,13 +208,27 @@ def scrapeTvshowAndDownload(id):
         json.dumps(data),
         mimetype="application/json",
         headers={"Content-disposition":
-                 "attachment; filename="+id+".json"})   
-   
-#    return data
+                 "attachment; filename="+id+".json"})  
+
+@app.route('/api/livescraper/download/video/<VideoId>', methods=['GET'])
+def GetVidepUrlByVideoId(VideoId):
+    Video_info =scrapeVidPage(VideoId)
+    return {"Video_info" :Video_info }
 
 
+@app.route('/api/livescraper/download/video_file/', methods=['GET','POST'])
+def GetVideoFileByVideoId():
+    args = request.args
+    if request.method == "POST":
+        VideoId = request.form.get("videoId")
+    else :
+        VideoId = args.get("videoId")
 
-    
+    Video_info =scrapeVidPage(VideoId)
+    video_link = Video_info[1]["url"]
+    r = requests.get(video_link)
+    return send_file(r.content, mimetype='video/mp4',as_attachment=True, attachment_filename=VideoId+'.mp4')
+
 
 if __name__ == '__main__':
    app.run()

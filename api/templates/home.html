@@ -35,6 +35,13 @@
   <h3 >https://www.imdb.com/title/<span style="color: red">tt0944947</span>  ----- IMDB Id
  </h3> 
 
+ <h2>download VIDEOS BY Video Id</h2>
+ <form action="/api/livescraper/download/video_file/" method="post">
+  <input type="text" id="video_id" name="videoId" placeholder="vi1143521817" value="vi1143521817">
+  <button type="submit">Download</button>
+  </form>
+
+
 
 <h2>Static IMDB Data</h2> 
 <table id="document">
@@ -148,6 +155,25 @@
 
   </tr>
   
+
+  
+</tr>
+  
+<tr>
+<td>GetVideoUrlByVideoId </td>
+<td>GET </td>
+<td>/api/livescraper/download/video/{videoId}}</td>
+        <td> <a href="/api/livescraper/download/video/vi1143521817" target="_blank">/api/livescraper/download/video/vi1143521817"</a> </td>
+
+</tr>
+
+<tr>
+  <td>GetVideoFileByVideoId </td>
+  <td>GET </td>
+  <td>/api/livescraper/download/video_file?videoId={videoId}}</td>
+          <td> <a href="/api/livescraper/download/video_file?videoId=vi1143521817" target="_blank">/api/livescraper/download/video_file?videoId=vi1143521817"</a> </td>
+  </tr>
+
   
   
 </table>
@@ -157,6 +183,12 @@
   <a href="https://www.imdb.com/title/tt6723592/reviews" target="_blank"> All Reviews for a movie/Tv clone </a> : <h3> 
 <a href="https://github.com/pavan412kalyan/imdb-movie-scraper/tree/main/downloaders" target="_blank">  my github here <a/>
 </p> 
+
+
+  
+
+
+
 
 
 </body>
