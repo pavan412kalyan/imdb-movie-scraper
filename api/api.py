@@ -211,17 +211,17 @@ def scrapeTvshowAndDownload(id):
                  "attachment; filename="+id+".json"})  
 
 @app.route('/api/livescraper/download/video/<VideoId>', methods=['GET'])
-def GetVidepUrlByVideoId(VideoId):
+def GetVideoUrlByVideoId(VideoId):
     Video_info =scrapeVidPage(VideoId)
     return {"Video_info" :Video_info }
 
 
 @app.route('/api/livescraper/download/video_file/', methods=['GET','POST'])
 def GetVideoFileByVideoId():
-    args = request.args
     if request.method == "POST":
         VideoId = request.form.get("videoId")
     else :
+        args = request.args
         VideoId = args.get("videoId")
 
     Video_info =scrapeVidPage(VideoId)
@@ -231,4 +231,4 @@ def GetVideoFileByVideoId():
 
 
 if __name__ == '__main__':
-   app.run()
+   app.run(debug=True)
