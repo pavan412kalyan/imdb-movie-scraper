@@ -27,13 +27,13 @@ def scrapeVidPage(video_id) :
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
     json_object = json.loads(script.string)
-    print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
+    # print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
     videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]
     # links video quality order auto,1080,720
 
     for video in videos[1:] :
         video_link = video["url"]
-        print(video_link)  
+        print("video_link",video_link)  
         break
     return videos[1:]
 
@@ -218,16 +218,22 @@ def GetVideoUrlByVideoId(VideoId):
 
 @app.route('/api/livescraper/download/video_file/', methods=['GET','POST'])
 def GetVideoFileByVideoId():
+    args = request.args
     if request.method == "POST":
         VideoId = request.form.get("videoId")
     else :
-        args = request.args
         VideoId = args.get("videoId")
-
-    Video_info =scrapeVidPage(VideoId)
-    video_link = Video_info[1]["url"]
-    r = requests.get(video_link)
-    return send_file(r.content, mimetype='video/mp4',as_attachment=True, attachment_filename=VideoId+'.mp4')
+    try:
+        Video_info =scrapeVidPage(VideoId)
+        video_link = Video_info[1]["url"]
+        r = requests.get(video_link)
+        return redirect(video_link)
+    except Exception as e:
+        return f'''<h2>Video does not  exist </h2>
+        <p><br> Verify here</p>
+         <a href=https://www.imdb.com/video/{VideoId}>here</a>'''
+    #return send_file(r.content, mimetype='video/mp4',as_attachment=True, attachment_filename=VideoId+'.mp4')
+#    return data
 
 
 if __name__ == '__main__':
