@@ -2,7 +2,7 @@
 import pymongo
 from pymongo import MongoClient
 import flask
-from flask import request, jsonify,render_template,Response,redirect
+from flask import after_this_request, request, jsonify,render_template,Response,redirect
 import sys
 import re
 from flask import send_file
@@ -17,6 +17,7 @@ from reviews import scrapeReviews
 from trendingMovies import trendingMovies
 from tvseries_scraper import scrapeTv
 from search_by_titles import scrapelist_title
+from download_more_images_by_movie_id import startDownload as download_images
 
 
 
@@ -235,6 +236,25 @@ def GetVideoFileByVideoId():
     #return send_file(r.content, mimetype='video/mp4',as_attachment=True, attachment_filename=VideoId+'.mp4')
 #    return data
 
+import shutil
+@app.route('/api/livescraper/download/images/', methods=['GET','POST'])
+def GetImagesByMovieId():
+    print("---")
+    args = request.args
+    if request.method == "POST":
+        movie_id = request.form.get("movie_id")
+    else :
+        movie_id = args.get("movie_id")
+    try:
+        download_images(movie_id)
+    except Exception as e:
+        print(e)
+    shutil.make_archive(f"{movie_id}", 'zip', f"images/{movie_id}/")
+    @after_this_request
+    def deleteData(response):
+        os.remove(f"{movie_id}.zip")
+        return response
+    return send_file(f"{movie_id}.zip",as_attachment=True)
 
 if __name__ == '__main__':
    app.run(debug=True)
