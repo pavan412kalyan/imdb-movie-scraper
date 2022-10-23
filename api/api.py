@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 import re,os
 import uuid,json
 from urllib.request import urlopen
+import  time
+
 
 from scrapping_functions import scrapIMDB
 from reviews import scrapeReviews
@@ -250,10 +252,10 @@ def GetImagesByMovieId():
     except Exception as e:
         print(e)
     shutil.make_archive(f"{movie_id}", 'zip', f"images/{movie_id}/")
-    @after_this_request
-    def deleteData(response):
-        os.remove(f"{movie_id}.zip")
-        return response
+    # @after_this_request
+    # def deleteData(response):
+    #     os.remove(f"{movie_id}.zip",)
+    #     return response
     return send_file(f"{movie_id}.zip",as_attachment=True)
 
 if __name__ == '__main__':
