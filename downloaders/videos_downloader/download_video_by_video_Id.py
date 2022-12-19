@@ -6,7 +6,6 @@ import uuid,json
 from urllib.request import urlopen
 
 
-
 def download(video_url,video_id) :
     file_size_str = requests.head(video_url).headers['Content-Length']
     file_size = str(float(file_size_str)/1024/1024) 
@@ -40,10 +39,13 @@ def download(video_url,video_id) :
 
 def scrapeVidPage(video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
+
     print(video_url)
-    r = requests.get(url=video_url)
+    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
+    print(r.status_code)
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
+    print(soup)
     json_object = json.loads(script.string)
     print(json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"])
     videos = json_object["props"]["pageProps"]["videoPlaybackData"]["video"]["playbackURLs"]

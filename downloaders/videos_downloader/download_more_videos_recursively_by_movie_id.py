@@ -54,7 +54,7 @@ def start(soup,ImdbId,limit=30) :
 def getmp4links(video_id,ImdbId) :
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
-    r = requests.get(url=video_url)
+    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
     json_object = json.loads(script.string)
@@ -71,7 +71,7 @@ def getmp4links(video_id,ImdbId) :
 #getmp4links(video_id="vi2922945817")
 
 def download(video_url,video_id,ImdbId) :
-    r = requests.get(video_url)
+    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
     unique_filename = str(uuid.uuid4())
     print("downloading  "+ unique_filename)
 
