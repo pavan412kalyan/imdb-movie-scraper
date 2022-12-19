@@ -10,7 +10,7 @@ from threading import Thread
 def getImages(soup) :
 #  url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
   data= {}
-  data['ImdbId']=ImdbId
+  # data['ImdbId']=ImdbId
   image_urls = []
 #  r = requests.get(url=url)
 #  soup = BeautifulSoup(r.text, 'html.parser')
@@ -45,10 +45,10 @@ def getImages(soup) :
   return data
 
 
-def download(img_url,ImdbId) :
+def download(img_url,ImdbId,path) :
     r = requests.get(img_url)
     unique_filename = str(uuid.uuid4())
-    with open(f'images/{ImdbId}/'+unique_filename+'.JPG', 'wb') as f:
+    with open(f'{path}/'+unique_filename+'.JPG', 'wb') as f:
         f.write(r.content)
 
 
@@ -60,6 +60,7 @@ def startDownload(ImdbId) :
     imdb_domain = "https://www.imdb.com" 
     url = "https://www.imdb.com/title/"+ImdbId+"/mediaindex"
     next_page=url
+    page =1;
     while next_page!="" :
             print(next_page)
             r = requests.get(url=next_page)
@@ -75,7 +76,8 @@ def startDownload(ImdbId) :
             except Exception as e:
                 print(e,"next-page did not found")
                 next_page=""
-                
+            path=f'images/{ImdbId}/{page}'
+            os.makedirs(path, exist_ok=True) 
             try :    
                 img=getImages(soup)
                 threads = []
@@ -87,8 +89,7 @@ def startDownload(ImdbId) :
                     img_url = "https://m.media-amazon." + img_url[2]+"."
 #                    print(img_url)
 #                    threads = []
-
-                    process = Thread(target=download, args=[img_url,ImdbId])
+                    process = Thread(target=download, args=[img_url,ImdbId,path])
                     process.start()
 #                    threads.append(process)
                 
@@ -98,19 +99,7 @@ def startDownload(ImdbId) :
             except Exception as e: 
                 print(e,"soup-exception")
                 break
-
-
-
-
-ImdbId="tt0944947"
-#startDownload(ImdbId)
-
-import time
-start = time.process_time()
-startDownload(ImdbId)
-print(time.process_time() - start)
-
-
-
-
-
+            page = page + 1
+            print(f'{path} done')
+            #######
+startDownload(ImdbId='tt0111161') 

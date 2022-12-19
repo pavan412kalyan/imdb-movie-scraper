@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from flask import request
 import requests
@@ -7,22 +6,12 @@ import re,os
 import uuid,json
 from threading import Thread
 
-
-
 def getVideos(soup) :
-#  url = "https://www.imdb.com/title/"+ImdbId+"/videogallery?sort=date&sortDir=asc"
-#  data= {}
-#  data['ImdbId']=ImdbId
-#  r = requests.get(url=url)
-#  soup = BeautifulSoup(r.text, 'html.parser')
-
-  videolist = soup.find('div',{"class" : "search-results"})
-  
+  videolist = soup.find('div',{"class" : "search-results"}) 
   Video_anchors_list=[]
   if videolist!= None :
       Video_anchors_list=videolist.findAll('a')
   print(len(Video_anchors_list))
-
   video_urls = []
   links=[]
   for a in Video_anchors_list :
@@ -37,10 +26,8 @@ def getVideos(soup) :
 
 def start(soup,ImdbId,limit=30) :
     video_list = getVideos(soup)
-    
     video_list=video_list[0:limit]
     video_ids = video_list
-    
     threads = []
     for video_id in video_ids :
         process = Thread(target=getmp4links, args=[video_id,ImdbId])
@@ -48,7 +35,6 @@ def start(soup,ImdbId,limit=30) :
         threads.append(process)         
     for process in threads:
          process.join()
-    
     
 
 def getmp4links(video_id,ImdbId) :
@@ -67,8 +53,6 @@ def getmp4links(video_id,ImdbId) :
         print(video_link)  
         break
     download(video_link,video_id,ImdbId)
-
-#getmp4links(video_id="vi2922945817")
 
 def download(video_url,video_id,ImdbId) :
     r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -91,13 +75,11 @@ def startDownload(ImdbId,limit) :
             r = requests.get(url=next_page)
             soup = BeautifulSoup(r.text, 'html.parser')
             try: 
-                
                   paginatinon_span= soup.findAll('span',{'class': 'pagination'})
                   a= paginatinon_span[1].findAll('a')[-1]
                   next_page =imdb_domain + a['href']
                   if "Next" not in a.string :
                       next_page=""
-    
 #                  print(next_page)
             except Exception as e:
                 print(e,"---next-page")
@@ -111,22 +93,9 @@ def startDownload(ImdbId,limit) :
                 print(e,"start-error")
                 break
 
-
-
-
-
-
-
-
-
-
-
-
-
 ImdbId="tt0944947"
 startDownload(ImdbId="tt0944947",limit=100)
-#video_url =scrapeVidPage("vi3877612057")
-#download(video_url)
+
 
 
 
