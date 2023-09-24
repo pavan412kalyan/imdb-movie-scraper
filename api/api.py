@@ -239,24 +239,24 @@ def GetVideoFileByVideoId():
 #    return data
 
 import shutil
-# @app.route('/api/livescraper/download/images/', methods=['GET','POST'])
-# def GetImagesByMovieId():
-#     print("---")
-#     args = request.args
-#     if request.method == "POST":
-#         movie_id = request.form.get("movie_id")
-#     else :
-#         movie_id = args.get("movie_id")
-#     try:
-#         download_images(movie_id)
-#     except Exception as e:
-#         print(e)
-#     shutil.make_archive(f"{movie_id}", 'zip', f"images/{movie_id}/")
-#     # @after_this_request
-#     # def deleteData(response):
-#     #     os.remove(f"{movie_id}.zip",)
-#     #     return response
-#     return send_file(f"{movie_id}.zip",as_attachment=True)
+@app.route('/api/livescraper/download/images/', methods=['GET','POST'])
+def GetImagesByMovieId():
+    print("---")
+    args = request.args
+    if request.method == "POST":
+        movie_id = request.form.get("movie_id")
+    else :
+        movie_id = args.get("movie_id")
+    try:
+        download_images(movie_id)
+    except Exception as e:
+        print(e)
+    shutil.make_archive(f"{movie_id}", 'zip', f"images/{movie_id}/")
+    # @after_this_request
+    # def deleteData(response):
+    #     os.remove(f"{movie_id}.zip",)
+    #     return response
+    return send_file(f"{movie_id}.zip",as_attachment=True)
 
 if __name__ == '__main__':
    app.run(debug=True)

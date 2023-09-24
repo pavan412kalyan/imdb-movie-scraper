@@ -14,7 +14,7 @@ def getMovieDetails(imdbID):
     # Create a BeautifulSoup object
     soup = BeautifulSoup(r.text, 'html.parser')
     jsonData = soup.find('script',{"type":"application/ld+json"})
-    #print(jsonData.string)
+    print(jsonData)
     Moredata=[]
     jsonSourceObj=json.loads(jsonData.string)
     Moredata.append(jsonSourceObj)
