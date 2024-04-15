@@ -10,11 +10,11 @@ from urllib.request import urlopen
 
 def getMovieTrailerDetails(imdbID):
     movie_url = "https://www.imdb.com/title/"+imdbID
-    r = requests.get(url=movie_url)
+    print(movie_url)
+    r = requests.get(url=movie_url,headers={'User-Agent': 'Mozilla/5.0'})
     # Create a BeautifulSoup object
     soup = BeautifulSoup(r.text, 'html.parser')
     jsonData = soup.find('script',{"type":"application/ld+json"})
-    #print(jsonData.string)
     jsonSourceObj=json.loads(jsonData.string)
     movie = {}
     movie['title'] = jsonSourceObj['name']
@@ -77,7 +77,7 @@ def download(video_url,video_id,imdbID) :
 def scrapeVidPage(video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
-    r = requests.get(url=video_url)
+    r = requests.get(url=video_url,headers={'User-Agent': 'Mozilla/5.0'})
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
     json_object = json.loads(script.string)
