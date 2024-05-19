@@ -49,7 +49,7 @@ def download(video_url,video_id,imdbID) :
     file_size_str = requests.head(video_url).headers['Content-Length']
     file_size = str(float(file_size_str)/1024/1024) 
     print(file_size + " MB")
-#    r = requests.get(video_url)
+#    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},video_url)
     ru = urlopen(video_url)
     f = open(f"trailers/{imdbID}/"+imdbID+".mp4", 'wb')
     
@@ -77,7 +77,7 @@ def download(video_url,video_id,imdbID) :
 def scrapeVidPage(video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
-    r = requests.get(url=video_url,headers={'User-Agent': 'Mozilla/5.0'})
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url,headers={'User-Agent': 'Mozilla/5.0'})
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
     json_object = json.loads(script.string)
@@ -101,7 +101,7 @@ def start_image_download(thumb_url,imdbID) :
     img_url = img_url.split(".")
     img_url = "https://m.media-amazon." + img_url[2]+"."
     print(img_url)
-    r = requests.get(img_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=img_url)
     with open(f'trailers/{imdbID}/'+imdbID+'.JPG', 'wb') as f:
         f.write(r.content)
 

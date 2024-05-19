@@ -42,7 +42,7 @@ def getImages(soup) :
 
 
 def download(img_url,ImdbId) :
-    r = requests.get(img_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=img_url)
     unique_filename = str(uuid.uuid4())
     with open(f'images/{ImdbId}/'+unique_filename+'.JPG', 'wb') as f:
         f.write(r.content)
@@ -55,7 +55,7 @@ def startDownload(ImdbId) :
     next_page=url
     while next_page!="" :
             print(next_page)
-            r = requests.get(url=next_page)
+            r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=next_page)
             soup = BeautifulSoup(r.text, 'html.parser')
             try: 
                   a= soup.findAll('a',{'class': 'prevnext'})[1]

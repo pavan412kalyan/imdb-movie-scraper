@@ -80,7 +80,7 @@ def scrapeReviews(soup,ImdbId) :
 
 def scrap(movie_url,ImdbId,all_data) :
     print(movie_url)
-    r = requests.get(url=movie_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=movie_url)
     soup = BeautifulSoup(r.text, 'html.parser')
      
     data =scrapeReviews(soup,ImdbId) 

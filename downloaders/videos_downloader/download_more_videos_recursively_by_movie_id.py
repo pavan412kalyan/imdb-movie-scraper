@@ -13,7 +13,7 @@ def getVideos(soup) :
 #  url = "https://www.imdb.com/title/"+ImdbId+"/videogallery?sort=date&sortDir=asc"
 #  data= {}
 #  data['ImdbId']=ImdbId
-#  r = requests.get(url=url)
+#  r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
 #  soup = BeautifulSoup(r.text, 'html.parser')
 
   videolist = soup.find('div',{"class" : "search-results"})
@@ -71,7 +71,7 @@ def getmp4links(video_id,ImdbId) :
 #getmp4links(video_id="vi2922945817")
 
 def download(video_url,video_id,ImdbId) :
-    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
     unique_filename = str(uuid.uuid4())
     print("downloading  "+ unique_filename)
 
@@ -88,7 +88,7 @@ def startDownload(ImdbId,limit) :
 
     while next_page!="" :
             print(next_page)
-            r = requests.get(url=next_page)
+            r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=next_page)
             soup = BeautifulSoup(r.text, 'html.parser')
             try: 
                 

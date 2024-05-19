@@ -26,7 +26,7 @@ from download_more_images_by_movie_id import startDownload as download_images
 def scrapeVidPage(video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
-    r = requests.get(url=video_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url)
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
     json_object = json.loads(script.string)
@@ -229,7 +229,7 @@ def GetVideoFileByVideoId():
     try:
         Video_info =scrapeVidPage(VideoId)
         video_link = Video_info[1]["url"]
-        r = requests.get(video_link)
+        r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_link)
         return redirect(video_link)
     except Exception as e:
         return f'''<h2>Video does not  exist </h2>

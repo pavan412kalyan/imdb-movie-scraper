@@ -13,7 +13,7 @@ from json import JSONDecoder
 
 def scrapSeason(imdbID,season_no,seasons) :
     seasons_url="https://www.imdb.com/title/"+imdbID+"/episodes/?season="+str(season_no)
-    r = requests.get(url=seasons_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=seasons_url)
     soup = BeautifulSoup(r.text, 'html.parser')
     episodes=[]
     episodetags = soup.find('div',class_=['eplist']).findAll('div',class_=['list_item'])
@@ -48,7 +48,7 @@ def scrapeTv(imdbID) :
 #    imdbID="tt5753856"
     ############
     seasons_url ="https://www.imdb.com/title/"+imdbID+"/episodes"
-    r = requests.get(url=seasons_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=seasons_url)
     soup = BeautifulSoup(r.text, 'html.parser')
     seasons_tag=[]
     try :

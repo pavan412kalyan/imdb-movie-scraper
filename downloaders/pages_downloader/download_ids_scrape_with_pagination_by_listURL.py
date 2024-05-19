@@ -28,15 +28,15 @@ def start_pagination(next_page) :
     imdb = "https://www.imdb.com"
     while next_page!="" :
             print(next_page)
-            r = requests.get(url=next_page)
+            r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=next_page)
             soup = BeautifulSoup(r.text, 'html.parser')
+            # print(soup)
             try: 
-                  next_page = imdb + soup.find('a',{'class': 'lister-page-next next-page'})['href']
+                  next_page = imdb + soup.find('span',{'class': 'ipc-see-more__text'})['href']
             except Exception as e: 
                 print(e)
                 next_page=""
-            
-            
+            print(next_page)
             try :
                 scrapelist(soup)
                 print(next_page)
@@ -57,6 +57,7 @@ def start(pageurl) :
     #url ="https://www.imdb.com/search/title/?title_type=feature&languages=hi&view=simple&count=250&start=12000"
 #    url="https://www.imdb.com/search/title/?countries=in&view=simple&count=250&after=WzkyMjMzNzIwMzY4NTQ3NzU4MDcsInR0OTkwNzA4MiIsOTU1MDFd"
     next_page=pageurl
+    print(next_page)
     start_pagination(next_page)
 #
 #if __name__ == "__main__": 
