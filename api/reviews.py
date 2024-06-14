@@ -17,7 +17,7 @@ def scrapeReviews(ImdbId,sort="submissionDate",ratingFilter=10,dir="asc") :
 #        movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews"
          movie_url = "https://www.imdb.com/title/"+ImdbId+"/reviews"+"/_ajax"
         
-    r = requests.get(url=movie_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=movie_url)
     # Create a BeautifulSoup object
     soup = BeautifulSoup(r.text, 'html.parser')
     try :

@@ -12,7 +12,7 @@ def getImages(ImdbId) :
   data= {}
   data['ImdbId']=ImdbId
   image_urls = []
-  r = requests.get(url=url)
+  r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
   soup = BeautifulSoup(r.text, 'html.parser')
   img =soup.find("img",{'class':'poster'})
   src=""
@@ -47,7 +47,7 @@ def getImages(ImdbId) :
 
 
 def download(img_url) :
-    r = requests.get(img_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=img_url)
     unique_filename = str(uuid.uuid4())
     with open('images/'+unique_filename+'.JPG', 'wb') as f:
         f.write(r.content)

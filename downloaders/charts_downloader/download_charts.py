@@ -36,7 +36,7 @@ def scrapechart(soup) :
 
 def scrape(url) :
     os.makedirs("charts", exist_ok=True)
-    r = requests.get(url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
     soup = BeautifulSoup(r.text, 'html.parser')
     scrapechart(soup)
 

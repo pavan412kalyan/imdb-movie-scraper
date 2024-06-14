@@ -72,7 +72,7 @@ def startDownload(ImdbId,limit) :
 
     while next_page!="" :
             print(next_page)
-            r = requests.get(url=next_page)
+            r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=next_page)
             soup = BeautifulSoup(r.text, 'html.parser')
             try: 
                   paginatinon_span= soup.findAll('span',{'class': 'pagination'})

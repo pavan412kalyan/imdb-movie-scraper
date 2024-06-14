@@ -14,7 +14,7 @@ def lambda_handler(event, context):
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
     try :
-        r = requests.get(url=video_url)
+        r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url)
         soup = BeautifulSoup(r.text, 'html.parser')
         script =soup.find("script",{'type': 'application/json'})
         json_object = json.loads(script.string)

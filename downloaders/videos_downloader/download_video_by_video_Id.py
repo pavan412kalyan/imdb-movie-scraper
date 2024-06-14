@@ -10,7 +10,7 @@ def download(video_url,video_id) :
     file_size_str = requests.head(video_url).headers['Content-Length']
     file_size = str(float(file_size_str)/1024/1024) 
     print(file_size + " MB")
-#    r = requests.get(video_url)
+#    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},video_url)
     ru = urlopen(video_url)
 
     unique_filename = str(uuid.uuid4())
@@ -97,7 +97,7 @@ start_download(video_id)
 
 
 ###############################
-#r = requests.get("https://cdn-a.amazon-adsystem.com/video/6feecfdc-9d90-4ae7-821c-bd1fd74855d4/MP4-10000kbs-29.97fps-48khz-320kbs-1080p.mp4")
+#r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},"https://cdn-a.amazon-adsystem.com/video/6feecfdc-9d90-4ae7-821c-bd1fd74855d4/MP4-10000kbs-29.97fps-48khz-320kbs-1080p.mp4")
 #unique_filename = str(uuid.uuid4())
 #with open('images/'+unique_filename+'.mp4', 'wb') as f:
 #    f.write(r.content)

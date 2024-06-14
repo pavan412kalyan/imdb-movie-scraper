@@ -109,7 +109,7 @@ def start_pagination(next_page) :
     imdb = "https://www.imdb.com"
     while next_page!="" :
             print(next_page)
-            r = requests.get(url=next_page)
+            r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=next_page)
             soup = BeautifulSoup(r.text, 'html.parser')
             try: 
                   next_page = imdb + soup.find('a',{'class': 'lister-page-next next-page'})['href']

@@ -14,7 +14,7 @@ def trendingMovies(lan="telugu") :
     
     movie_url ="https://www.imdb.com/india/"+lan+"/"
 #    print(movie_url)
-    r = requests.get(url=movie_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=movie_url)
     soup = BeautifulSoup(r.text, 'html.parser')
     topMovies_soup = soup.findAll("div", {"class": "trending-list-rank-item"})
         

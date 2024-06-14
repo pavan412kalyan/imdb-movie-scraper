@@ -10,7 +10,7 @@ def getMovieDetails(imdbID):
     data = {}
     
     movie_url = "https://www.imdb.com/title/"+imdbID
-    r = requests.get(url=movie_url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=movie_url)
     # Create a BeautifulSoup object
     soup = BeautifulSoup(r.text, 'html.parser')
     jsonData = soup.find('script',{"type":"application/ld+json"})
@@ -132,7 +132,7 @@ def getCrewData(imdbID):
         "imdbID" : imdbID,
         "crew": []
     }
-    r = requests.get(url=url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
 
     # Create a BeautifulSoup object
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -163,7 +163,7 @@ def getImages(ImdbId) :
   data= {}
   data['ImdbId']=ImdbId
   image_urls = []
-  r = requests.get(url=url)
+  r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
   soup = BeautifulSoup(r.text, 'html.parser')
   img =soup.find("img",{'class':'poster'})
   src=""
@@ -202,7 +202,7 @@ def getVideos(ImdbId) :
   data= {}
   data['ImdbId']=ImdbId
   video_urls = []
-  r = requests.get(url=url)
+  r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
 #  print(url)
   soup = BeautifulSoup(r.text, 'html.parser')
   videoList =soup.find("div",{'class':'mediastrip_big'})

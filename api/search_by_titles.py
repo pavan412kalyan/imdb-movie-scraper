@@ -13,7 +13,7 @@ def  scrapelist_title(title,count) :
     
     url ="https://www.imdb.com/search/title/?title="+ str(title)+"&count="+ str(count) + "&view=simple" 
     print(url)
-    r = requests.get(url=url)
+    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=url)
     soup = BeautifulSoup(r.text, 'html.parser')
     taglist = soup.findAll('div',{"class" : "col-title" })
     data = [ ]
