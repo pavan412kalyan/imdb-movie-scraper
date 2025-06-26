@@ -3,8 +3,26 @@ This repo is for
 2) REST API for content of IMDB <br>
    a) Static data  - hosted on MongoDB <br>
    b) Dynamic data - scraping from Imdb on Request
+###  Link for API and documentation: https://imdb-rest-api.herokuapp.com/
+
+
+3) **V2 Scraper** - Pull data from API instead of scraping the data from Website
   
- ###  Link for API and documentation: https://imdb-rest-api.herokuapp.com/
+## V2 Scraper (ImdbScraperV2/)
+Modern scrapers using IMDB's GraphQL APIs for faster and more reliable data extraction:
+
+### Features:
+- **Images Downloader**: Downloads high-quality images using GraphQL pagination
+- **Review Downloader**: Scrapes reviews using modern API endpoints
+- **Pages Downloader**: Bulk movie list scraping with improved performance
+
+### Usage:
+```bash
+cd ImdbScraperV2/images_dowloader/
+python3 images_downloader.py
+```
+Use scrapeSel.py to get PERSISTED_QUERY_HASH variable
+
   
    Download Content     |   
    --------------       | 
