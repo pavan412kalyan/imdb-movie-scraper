@@ -20,6 +20,10 @@ Modern scrapers using IMDB's GraphQL APIs for faster and more reliable data extr
 ```bash
 cd ImdbScraperV2/images_dowloader/
 python3 images_downloader.py
+
+# Video downloader
+cd ../videos_downloader/
+python3 videos_downloader.py
 ```
 Use scrapeSel.py to get PERSISTED_QUERY_HASH variable
 
