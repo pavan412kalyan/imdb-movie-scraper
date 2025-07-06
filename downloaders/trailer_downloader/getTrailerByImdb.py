@@ -77,7 +77,7 @@ def download(video_url,video_id,imdbID) :
 def scrapeVidPage(video_id) :
     video_url= "https://www.imdb.com/video/"+video_id
     print(video_url)
-    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url,headers={'User-Agent': 'Mozilla/5.0'})
+    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
     soup = BeautifulSoup(r.text, 'html.parser')
     script =soup.find("script",{'type': 'application/json'})
     json_object = json.loads(script.string)

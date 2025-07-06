@@ -20,10 +20,10 @@ def scrapeReviews(ImdbId,sort="submissionDate",ratingFilter=10,dir="asc") :
     r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=movie_url)
     # Create a BeautifulSoup object
     soup = BeautifulSoup(r.text, 'html.parser')
-    try :
-        reviews = soup.find_all('div',{'class' : 'imdb-user-review'})
-    except :
-        pass
+    try:
+        reviews = soup.find_all('div', {'class': 'imdb-user-review'})
+    except Exception:
+        reviews = []
         
     
     #review = soup.find('div',{'class' : 'imdb-user-review'})

@@ -70,8 +70,8 @@ def getmp4links(video_id,ImdbId) :
 
 #getmp4links(video_id="vi2922945817")
 
-def download(video_url,video_id,ImdbId) :
-    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
+def download(video_url, video_id, ImdbId):
+    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
     unique_filename = str(uuid.uuid4())
     print("downloading  "+ unique_filename)
 

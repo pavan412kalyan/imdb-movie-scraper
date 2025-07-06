@@ -95,7 +95,7 @@ def getmp4links(ImdbId,video_id) :
 #getmp4links(video_id="vi2922945817")
 
 def download(ImdbId,video_id,video_url) :
-    r = requests.get(headers={'User-Agent': 'Mozilla/5.0'},url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
+    r = requests.get(url=video_url, headers={'User-Agent': 'Mozilla/5.0'})
     print("downloading  "+ video_id)
     os.makedirs("videos", exist_ok=True)
 
