@@ -11,7 +11,6 @@ MOVIE_ID = "tt0944947"
 # === CONFIGURATION ===
 BASE_URL = "https://caching.graphql.imdb.com/"
 OPERATION_NAME = "TitleReviewsRefine"
-PERSISTED_QUERY_HASH = "8e851a269025170d18a33b296a5ced533529abb4e7bc3d6b96d1f36636e7f685"
 PAGE_SIZE = 25 #fixed
 OUTPUT_FOLDER = MOVIE_ID
 
@@ -23,12 +22,11 @@ HEADERS = {
     'priority': 'u=1, i'
 }
 
-def get_encoded_variables(after_cursor):
+def get_variables(after_cursor):
     variables = {
         "const": MOVIE_ID,
         "filter": {},
         "first": PAGE_SIZE,
-        "locale": "en-US",
         "sort": {
             "by": "HELPFULNESS_SCORE",
             "order": "DESC"
@@ -36,22 +34,49 @@ def get_encoded_variables(after_cursor):
     }
     if after_cursor:
         variables["after"] = after_cursor
-    return urllib.parse.quote(json.dumps(variables, separators=(',', ':')))
+    return variables
 
 
 def fetch_page(after_cursor):
-    encoded_vars = get_encoded_variables(after_cursor)
-    extensions = {
-        "persistedQuery": {
-            "sha256Hash": PERSISTED_QUERY_HASH,
-            "version": 1
-        }
+    payload = {
+        "query": """query TitleReviewsRefine($const: ID!, $filter: ReviewsFilter, $first: Int!, $sort: ReviewsSort, $after: ID) {
+          title(id: $const) {
+            reviews(filter: $filter, first: $first, sort: $sort, after: $after) {
+              edges {
+                node {
+                  id
+                  author {
+                    nickName
+                  }
+                  authorRating
+                  helpfulness {
+                    upVotes
+                    downVotes
+                  }
+                  submissionDate
+                  text {
+                    originalText {
+                      plainText
+                    }
+                  }
+                  summary {
+                    originalText
+                  }
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        }""",
+        "operationName": OPERATION_NAME,
+        "variables": get_variables(after_cursor)
     }
-    encoded_ext = urllib.parse.quote(json.dumps(extensions, separators=(',', ':')))
-    url = f"{BASE_URL}?operationName={OPERATION_NAME}&variables={encoded_vars}&extensions={encoded_ext}"
 
     print(f"🌐 Requesting page with cursor: {after_cursor or '[first page]'}")
-    response = requests.get(url, headers=HEADERS)
+    response = requests.post(BASE_URL, headers=HEADERS, json=payload)
     response.raise_for_status()
     return response.json()
 
