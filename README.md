@@ -13,29 +13,49 @@ Modern scrapers using IMDB's GraphQL APIs for faster and more reliable data extr
 
 ### Features:
 - **Images Downloader**: Downloads high-quality images using GraphQL pagination
-- **Review Downloader**: Scrapes reviews using modern API endpoints
-- **Pages Downloader**: Bulk movie list scraping with improved performance
+- **Review Downloader**: Scrapes reviews using GraphQL API with pagination
+- **Pages Downloader**: Bulk movie list scraping with GraphQL queries
+- **Videos Downloader**: Extract and download videos with multi-threading support
+- **Movie Info Downloader**: Extract comprehensive movie information from JSON-LD
 
 ### Usage:
 ```bash
+# Images downloader
 cd ImdbScraperV2/images_dowloader/
 python3 images_downloader.py
 
-# Video downloader
+# Video downloader - single video
 cd ../videos_downloader/
-python3 videos_downloader.py
-```
-Use scrapeSel.py to get PERSISTED_QUERY_HASH variable
+python3 download_video_from_id.py
 
+# Video downloader - bulk download with threading
+python3 bulk_video_downloader.py
+
+# Extract video IDs from movie gallery
+python3 extract_video_ids_from_gallery.py
+
+# Reviews downloader
+cd ../review_downloader/
+python3 reviews.py
+
+# Pages downloader
+cd ../pages_dowloader/
+python3 scrape_all_movie_list.py
+
+# Movie info downloader
+cd ../movie_info_downloader/
+python3 download_movie_info.py
+```
   
-   Download Content     |   
-   --------------       | 
-   Image downloader     |  
-   Video downloader     |
-   Pages dowloader      |
-   Reviews downloader   |
-   Tv series dowloader  |
-   movie dowloader      |
+### V2 Download Content Modules:
+- **Images Downloader**: High-quality image extraction with pagination
+- **Videos Downloader**: 
+  - Single video download by ID
+  - Bulk video download with multi-threading
+  - Video gallery extraction
+- **Reviews Downloader**: Complete review extraction with pagination
+- **Pages Downloader**: Movie list scraping from search results
+- **Movie Info Downloader**: Comprehensive movie metadata extraction
    
   # Reviews downloader
   1) Download all Reviews of Movie/Tv Series by Imdbd ID 

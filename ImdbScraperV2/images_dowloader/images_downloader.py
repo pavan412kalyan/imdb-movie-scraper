@@ -8,7 +8,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = "https://caching.graphql.imdb.com/"
 OPERATION_NAME = "TitleMediaIndexPagination"
-PERSISTED_QUERY_HASH = "e03a2b4d4986f47d6e3e5ead8721f7441c2557c167c52d05302bbb93bab47c3d"
 IMDB_ID = "tt0944947"
 
 HEADERS = {
@@ -29,43 +28,40 @@ HEADERS = {
     'x-imdb-user-language': 'en-US'
 }
 
-def get_encoded_variables(after_cursor):
+def get_variables(after_cursor):
     variables = {
-        "after": after_cursor,
         "const": IMDB_ID,
-        "filter": {
-            "galleryConstraints": {},
-            "nameConstraints": {}
-        },
-        "first": 50,
-        "firstFacets": 250,
-        "inIframeLinkContext": {
-            "business": "consumer",
-            "isInIframe": True,
-            "returnUrl": "https://www.imdb.com/close_me"
-        },
-        "isInPace": False,
-        "locale": "en-US",
-        "notInIframeLinkContext": {
-            "business": "consumer",
-            "isInIframe": False,
-            "returnUrl": "https://www.imdb.com/"
-        },
-        "originalTitleText": False
+        "first": 50
     }
-    return urllib.parse.quote(json.dumps(variables, separators=(',', ':')))
+    if after_cursor:
+        variables["after"] = after_cursor
+    return variables
 
 def fetch_page(after_cursor):
-    encoded_vars = get_encoded_variables(after_cursor)
-    extensions = {
-        "persistedQuery": {
-            "sha256Hash": PERSISTED_QUERY_HASH,
-            "version": 1
-        }
+    payload = {
+        "query": """query TitleMediaIndexPagination($const: ID!, $first: Int!, $after: ID) {
+          title(id: $const) {
+            images(first: $first, after: $after) {
+              edges {
+                node {
+                  url
+                  caption {
+                    plainText
+                  }
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        }""",
+        "operationName": OPERATION_NAME,
+        "variables": get_variables(after_cursor)
     }
-    encoded_ext = urllib.parse.quote(json.dumps(extensions, separators=(',', ':')))
-    url = f"{BASE_URL}?operationName={OPERATION_NAME}&variables={encoded_vars}&extensions={encoded_ext}"
-    response = requests.get(url, headers=HEADERS)
+    
+    response = requests.post(BASE_URL, headers=HEADERS, json=payload)
     if response.status_code != 200:
         print(f"❌ Error {response.status_code}: {response.text}")
         return {}
