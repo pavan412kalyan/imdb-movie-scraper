@@ -1,59 +1,82 @@
-This repo is for 
-1) Scraping  content on IMDB website
-2) REST API for content of IMDB <br>
-   a) Static data  - hosted on MongoDB <br>
-   b) Dynamic data - scraping from Imdb on Request
-###  Link for API and documentation: https://imdb-rest-api.herokuapp.com/
+# IMDB Scraper
 
+This repo is for:
+1) Scraping content on IMDB website
+2) REST API for content of IMDB
+   - Static data - hosted on MongoDB
+   - Dynamic data - scraping from IMDB on Request
 
-3) **V2 Scraper** - Pull data from API instead of scraping the data from Website
-  
-## V2 Scraper (ImdbScraperV2/)
-Modern scrapers using IMDB's GraphQL APIs for faster and more reliable data extraction:
+### Link for API and documentation: https://imdb-rest-api.herokuapp.com/
 
-### Features:
-- **Images Downloader**: Downloads high-quality images using GraphQL pagination
-- **Review Downloader**: Scrapes reviews using modern API endpoints
-- **Pages Downloader**: Bulk movie list scraping with improved performance
+## V2 Scraper
 
-### Usage:
+Modern IMDB content scraper using GraphQL APIs for fast and reliable data extraction.
+
+## Features
+
+### 🖼️ Images Downloader
+- Download high-quality images with GraphQL pagination
+- Multi-threaded downloads for faster processing
+- Automatic folder organization
+
+### 🎬 Videos Downloader
+- Extract video URLs from IMDB pages
+- Single video download by video ID
+- Bulk video download with multi-threading
+- Video gallery extraction from movie pages
+
+### 📝 Reviews Downloader
+- Complete review extraction with pagination
+- GraphQL API integration
+- Structured JSON output
+
+### 📄 Pages Downloader
+- Bulk movie list scraping from search results
+- Advanced title search with GraphQL
+- Pagination support for large datasets
+
+### 🎭 Movie Info Downloader
+- Comprehensive movie metadata extraction
+- JSON-LD structured data parsing
+- Complete cast, crew, and production details
+
+## Usage
+
 ```bash
+# Images downloader
 cd ImdbScraperV2/images_dowloader/
 python3 images_downloader.py
+
+# Video downloader - single video
+cd ../videos_downloader/
+python3 download_video_from_id.py
+
+# Video downloader - bulk download with threading
+python3 bulk_video_downloader.py
+
+# Extract video IDs from movie gallery
+python3 extract_video_ids_from_gallery.py
+
+# Reviews downloader
+cd ../review_downloader/
+python3 reviews.py
+
+# Pages downloader
+cd ../pages_dowloader/
+python3 scrape_all_movie_list.py
+
+# Movie info downloader
+cd ../movie_info_downloader/
+python3 download_movie_info.py
 ```
-Use scrapeSel.py to get PERSISTED_QUERY_HASH variable
 
-  
-   Download Content     |   
-   --------------       | 
-   Image downloader     |  
-   Video downloader     |
-   Pages dowloader      |
-   Reviews downloader   |
-   Tv series dowloader  |
-   movie dowloader      |
-   
-  # Reviews downloader
-  1) Download all Reviews of Movie/Tv Series by Imdbd ID 
-   
-  # Image downloader
-  1) Download Images by Imdbd ID 
-  2) Download All Images of movie/Tv  by Imdbd ID 
-  
-  # Videos downloader
-  1) Download videos by Imdbd ID 
-  2) Download all videos of movie  by Imdbd ID 
-  
-  # Movie data downloader
-  1) Download Movie data by list of Imdbd IDs from csv file 
-  2) Download Movie data from list of csv files placed in a folder.
+## Key Improvements
 
-  # Tv series downloader
-  1) Download Tv series data by Imdbd ID 
-
-  # Page downloader
-  1) Download all Imdbd IDs  by search list url 
-  2) Download all movie data by search list url
+- ✅ **No PERSISTED_QUERY_HASH required**: Uses full GraphQL queries
+- ⚡ **Multi-threading support**: Faster downloads with concurrent processing
+- 🛡️ **Better error handling**: Robust error handling and retry mechanisms
+- 📊 **Comprehensive data**: Extracts all available metadata including JSON-LD
+- 🔄 **Pagination support**: Handles large datasets efficiently
 
 
 

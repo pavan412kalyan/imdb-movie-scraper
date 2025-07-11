@@ -18,41 +18,56 @@ HEADERS = {
     'priority': 'u=1, i'
 }
 
-def get_encoded_variables(after_cursor):
+def get_variables(after_cursor):
     variables = {
-        "after": after_cursor if after_cursor else None,
-        "first": 1000,
-        # "languageConstraint": { "allLanguages": ["en"] },
-        "locale": "en-US",
-        "sortBy": "POPULARITY",
-        "sortOrder": "ASC",
-        "titleTypeConstraint": {
-            "anyTitleTypeIds": ["movie"], # Type of titles to include   
-            "excludeTitleTypeIds": []
-        }
+        "first": 1000
     }
-    if variables["after"] is None:
-        del variables["after"]
-    return urllib.parse.quote(json.dumps(variables, separators=(',', ':')))
+    if after_cursor:
+        variables["after"] = after_cursor
+    return variables
 
 def fetch_page(after_cursor):
-    encoded_vars = get_encoded_variables(after_cursor)
-    extensions = {
-        "persistedQuery": {
-            "sha256Hash": PERSISTED_QUERY_HASH,
-            "version": 1
-        }
+    payload = {
+        "query": """query AdvancedTitleSearch($after: String, $first: Int!) {
+          advancedTitleSearch(after: $after, first: $first) {
+            edges {
+              node {
+                title {
+                  id
+                  titleText {
+                    text
+                  }
+                  titleType {
+                    text
+                  }
+                  releaseYear {
+                    year
+                  }
+                  ratingsSummary {
+                    aggregateRating
+                    voteCount
+                  }
+                }
+              }
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            total
+          }
+        }""",
+        "operationName": OPERATION_NAME,
+        "variables": get_variables(after_cursor)
     }
-    encoded_ext = urllib.parse.quote(json.dumps(extensions, separators=(',', ':')))
     
-    url = f"{BASE_URL}?operationName={OPERATION_NAME}&variables={encoded_vars}&extensions={encoded_ext}"
-    response = requests.get(url, headers=HEADERS)
+    response = requests.post(BASE_URL, headers=HEADERS, json=payload)
     response.raise_for_status()
     return response.json()
 
 def extract_titles(data):
-    results = data.get("data", {}).get("advancedTitleSearch", {}).get("results", [])
-    return [item.get("titleText", {}).get("text") for item in results if item.get("titleText")]
+    edges = data.get("data", {}).get("advancedTitleSearch", {}).get("edges", [])
+    return [edge.get("node", {}).get("title", {}).get("titleText", {}).get("text") for edge in edges if edge.get("node", {}).get("title", {}).get("titleText")]
 
 def main(max_pages=5, save_files=False):
     after_cursor = None
