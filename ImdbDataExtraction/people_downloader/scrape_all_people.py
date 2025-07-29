@@ -107,6 +107,52 @@ def fetch_page(after_cursor=None):
                   birthLocation {
                     text
                   }
+                  height {
+                    measurement {
+                      value
+                      unit
+                    }
+                  }
+                  bio {
+                    text {
+                      plainText
+                    }
+                  }
+                  trivia(first: 5) {
+                    edges {
+                      node {
+                        text {
+                          plainText
+                        }
+                      }
+                    }
+                  }
+                  quotes(first: 3) {
+                    edges {
+                      node {
+                        text {
+                          plainText
+                        }
+                      }
+                    }
+                  }
+                  nickNames(limit: 5) {
+                    text
+                  }
+                  akas(first: 10) {
+                    edges {
+                      node {
+                        text
+                      }
+                    }
+                  }
+                  meterRanking {
+                    currentRank
+                    rankChange {
+                      changeDirection
+                      difference
+                    }
+                  }
                 }
               }
             }
@@ -157,79 +203,150 @@ def extract_people(data):
             name_text = name_data.get("nameText", {}).get("text")
             if not name_text:
                 continue
-                # Extract professions
-                professions = []
-                prof_data = name_data.get("primaryProfessions", [])
-                if prof_data:
-                    for prof in prof_data:
-                        if prof and prof.get("category", {}) and prof.get("category", {}).get("text"):
-                            professions.append({
-                                "text": prof["category"]["text"],
-                                "id": prof["category"].get("id")
-                            })
-                
-                # Extract known for titles
-                known_for = []
-                kf_data = name_data.get("knownFor", {})
-                if kf_data and kf_data.get("edges"):
-                    for kf_edge in kf_data.get("edges", []):
-                        if kf_edge and kf_edge.get("node") and kf_edge.get("node", {}).get("title"):
-                            title = kf_edge["node"]["title"]
-                            known_for.append({
-                                "id": title.get("id"),
-                                "title": title.get("titleText", {}).get("text") if title.get("titleText") else None,
-                                "year": title.get("releaseYear", {}).get("year") if title.get("releaseYear") else None,
-                                "type": title.get("titleType", {}).get("text") if title.get("titleType") else None,
-                                "rating": title.get("ratingsSummary", {}).get("aggregateRating") if title.get("ratingsSummary") else None
-                            })
-                
-                # Extract birth/death dates
-                birth_date = None
-                birth_data = name_data.get("birthDate")
-                if birth_data and birth_data.get("dateComponents"):
-                    date_comp = birth_data.get("dateComponents")
-                    year = date_comp.get('year')
-                    month = date_comp.get('month', 1)
-                    day = date_comp.get('day', 1)
-                    if year:
-                        birth_date = f"{year}-{month:02d}-{day:02d}"
-                
-                death_date = None
-                death_data = name_data.get("deathDate")
-                if death_data and death_data.get("dateComponents"):
-                    date_comp = death_data.get("dateComponents")
-                    year = date_comp.get('year')
-                    month = date_comp.get('month', 1)
-                    day = date_comp.get('day', 1)
-                    if year:
-                        death_date = f"{year}-{month:02d}-{day:02d}"
-                
-                # Extract image with dimensions
-                primary_image = name_data.get("primaryImage")
-                image_info = None
-                if primary_image:
-                    image_info = {
-                        "url": primary_image.get("url"),
-                        "width": primary_image.get("width"),
-                        "height": primary_image.get("height")
-                    }
-                
-                # Extract birth location safely
-                birth_location = None
-                birth_loc_data = name_data.get("birthLocation")
-                if birth_loc_data and birth_loc_data.get("text"):
-                    birth_location = birth_loc_data.get("text")
-                
-                people.append({
-                    "id": name_data.get("id"),
-                    "name": name_text,
-                    "primaryImage": image_info,
-                    "professions": professions,
-                    "knownFor": known_for,
-                    "birthDate": birth_date,
-                    "deathDate": death_date,
-                    "birthLocation": birth_location
-                })
+            
+            # Extract professions
+            professions = []
+            prof_data = name_data.get("primaryProfessions", [])
+            if prof_data:
+                for prof in prof_data:
+                    if prof and prof.get("category", {}) and prof.get("category", {}).get("text"):
+                        professions.append({
+                            "text": prof["category"]["text"],
+                            "id": prof["category"].get("id")
+                        })
+            
+            # Extract known for titles
+            known_for = []
+            kf_data = name_data.get("knownFor", {})
+            if kf_data and kf_data.get("edges"):
+                for kf_edge in kf_data.get("edges", []):
+                    if kf_edge and kf_edge.get("node") and kf_edge.get("node", {}).get("title"):
+                        title = kf_edge["node"]["title"]
+                        known_for.append({
+                            "id": title.get("id"),
+                            "title": title.get("titleText", {}).get("text") if title.get("titleText") else None,
+                            "year": title.get("releaseYear", {}).get("year") if title.get("releaseYear") else None,
+                            "type": title.get("titleType", {}).get("text") if title.get("titleType") else None,
+                            "rating": title.get("ratingsSummary", {}).get("aggregateRating") if title.get("ratingsSummary") else None
+                        })
+            
+            # Extract birth/death dates
+            birth_date = None
+            birth_data = name_data.get("birthDate")
+            if birth_data and birth_data.get("dateComponents"):
+                date_comp = birth_data.get("dateComponents")
+                year = date_comp.get('year')
+                month = date_comp.get('month', 1)
+                day = date_comp.get('day', 1)
+                if year:
+                    birth_date = f"{year}-{month:02d}-{day:02d}"
+            
+            death_date = None
+            death_data = name_data.get("deathDate")
+            if death_data and death_data.get("dateComponents"):
+                date_comp = death_data.get("dateComponents")
+                year = date_comp.get('year')
+                month = date_comp.get('month', 1)
+                day = date_comp.get('day', 1)
+                if year:
+                    death_date = f"{year}-{month:02d}-{day:02d}"
+            
+            # Extract image with dimensions
+            primary_image = name_data.get("primaryImage")
+            image_info = None
+            if primary_image:
+                image_info = {
+                    "url": primary_image.get("url"),
+                    "width": primary_image.get("width"),
+                    "height": primary_image.get("height")
+                }
+            
+            # Extract birth location safely
+            birth_location = None
+            birth_loc_data = name_data.get("birthLocation")
+            if birth_loc_data and birth_loc_data.get("text"):
+                birth_location = birth_loc_data.get("text")
+            
+            # Extract height
+            height = None
+            height_data = name_data.get("height")
+            if height_data and height_data.get("measurement"):
+                measurement = height_data["measurement"]
+                value = measurement.get("value")
+                unit = measurement.get("unit")
+                if value and unit:
+                    height = f"{value} {unit}"
+            
+            # Extract bio
+            bio = None
+            bio_data = name_data.get("bio")
+            if bio_data and bio_data.get("text") and bio_data.get("text").get("plainText"):
+                bio = bio_data["text"]["plainText"]
+            
+            # Extract trivia
+            trivia = []
+            trivia_data = name_data.get("trivia", {})
+            if trivia_data and trivia_data.get("edges"):
+                for trivia_edge in trivia_data.get("edges", []):
+                    if trivia_edge and trivia_edge.get("node") and trivia_edge.get("node").get("text"):
+                        trivia_text = trivia_edge["node"]["text"].get("plainText")
+                        if trivia_text:
+                            trivia.append(trivia_text)
+            
+            # Extract quotes
+            quotes = []
+            quotes_data = name_data.get("quotes", {})
+            if quotes_data and quotes_data.get("edges"):
+                for quote_edge in quotes_data.get("edges", []):
+                    if quote_edge and quote_edge.get("node") and quote_edge.get("node").get("text"):
+                        quote_text = quote_edge["node"]["text"].get("plainText")
+                        if quote_text:
+                            quotes.append(quote_text)
+            
+            # Extract nicknames
+            nicknames = []
+            nicknames_data = name_data.get("nickNames", [])
+            if nicknames_data:
+                for nickname in nicknames_data:
+                    if nickname and nickname.get("text"):
+                        nicknames.append(nickname["text"])
+            
+            # Extract alternative names (akas)
+            akas = []
+            akas_data = name_data.get("akas", {})
+            if akas_data and akas_data.get("edges"):
+                for aka_edge in akas_data.get("edges", []):
+                    if aka_edge and aka_edge.get("node") and aka_edge.get("node").get("text"):
+                        akas.append(aka_edge["node"]["text"])
+            
+            # Extract meter ranking
+            meter_ranking = None
+            ranking_data = name_data.get("meterRanking")
+            if ranking_data:
+                rank_change = ranking_data.get("rankChange", {})
+                meter_ranking = {
+                    "currentRank": ranking_data.get("currentRank"),
+                    "changeDirection": rank_change.get("changeDirection") if rank_change else None,
+                    "difference": rank_change.get("difference") if rank_change else None
+                }
+            
+            people.append({
+                "id": name_data.get("id"),
+                "name": name_text,
+                "primaryImage": image_info,
+                "professions": professions,
+                "knownFor": known_for,
+                "birthDate": birth_date,
+                "deathDate": death_date,
+                "birthLocation": birth_location,
+                "height": height,
+                "bio": bio,
+                "trivia": trivia,
+                "quotes": quotes,
+                "nicknames": nicknames,
+                "akas": akas,
+                "meterRanking": meter_ranking
+            })
         
         print(f"  Successfully extracted {len(people)} people")
         return people
