@@ -9,7 +9,6 @@ import time
 
 BASE_URL = "https://caching.graphql.imdb.com/"
 OPERATION_NAME = "NameVideoGalleryPagination"
-PERSISTED_QUERY_HASH = "7c5c937a7fb93a3715d222bb16b903c65c0aa22da38ff874c7814825c31100aa"
 
 HEADERS = {
     'accept': 'application/graphql+json, application/json',
@@ -59,14 +58,37 @@ def get_variables(person_id, after_cursor=None):
 
 def fetch_page(person_id, after_cursor=None):
     payload = {
-        "operationName": OPERATION_NAME,
-        "variables": get_variables(person_id, after_cursor),
-        "extensions": {
-            "persistedQuery": {
-                "sha256Hash": PERSISTED_QUERY_HASH,
-                "version": 1
+        "query": """query NameVideoGalleryPagination($const: ID!, $after: ID, $first: Int!) {
+          name(id: $const) {
+            videos(after: $after, first: $first) {
+              edges {
+                node {
+                  id
+                  name {
+                    value
+                  }
+                  thumbnail {
+                    url
+                  }
+                  runtime {
+                    value
+                  }
+                  contentType {
+                    displayName {
+                      value
+                    }
+                  }
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
             }
-        }
+          }
+        }""",
+        "operationName": OPERATION_NAME,
+        "variables": get_variables(person_id, after_cursor)
     }
     
     response = requests.post(BASE_URL, headers=HEADERS, json=payload)

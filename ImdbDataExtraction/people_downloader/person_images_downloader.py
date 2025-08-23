@@ -11,7 +11,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = "https://caching.graphql.imdb.com/"
 OPERATION_NAME = "NameMediaIndexPagination"
-PERSISTED_QUERY_HASH = "6590d686f516dbd5ec06eab4efa37b7f8c8ce40b9aacf9b80889969e90c9e826"
 
 HEADERS = {
     'accept': 'application/graphql+json, application/json',
@@ -39,24 +38,36 @@ def get_variables(person_id, after_cursor=None):
         "originalTitleText": False
     }
     
-    # Always include after cursor - use empty string for first page
+    # Only include after cursor if it exists
     if after_cursor:
         variables["after"] = after_cursor
-    else:
-        variables["after"] = ""
     
     return variables
 
 def fetch_page(person_id, after_cursor=None):
     payload = {
-        "operationName": OPERATION_NAME,
-        "variables": get_variables(person_id, after_cursor),
-        "extensions": {
-            "persistedQuery": {
-                "sha256Hash": PERSISTED_QUERY_HASH,
-                "version": 1
+        "query": """query NameMediaIndexPagination($const: ID!, $after: ID, $first: Int!) {
+          name(id: $const) {
+            images(after: $after, first: $first) {
+              edges {
+                node {
+                  url
+                  caption {
+                    plainText
+                  }
+                  width
+                  height
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
             }
-        }
+          }
+        }""",
+        "operationName": OPERATION_NAME,
+        "variables": get_variables(person_id, after_cursor)
     }
     
     response = requests.post(BASE_URL, headers=HEADERS, json=payload)
