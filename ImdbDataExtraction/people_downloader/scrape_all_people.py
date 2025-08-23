@@ -10,7 +10,6 @@ import urllib.parse
 
 BASE_URL = "https://caching.graphql.imdb.com/"
 OPERATION_NAME = "AdvancedNameSearch"
-PERSISTED_QUERY_HASH = "5637585c2bcca8a7e86f697d5e2c2d8bfde3191e6da2b947649eaf8d5df24e44"
 
 HEADERS = {
     'accept': 'application/graphql+json, application/json',
@@ -39,13 +38,7 @@ def get_variables(after_cursor=None):
     
     return variables
 
-def get_extensions():
-    return {
-        "persistedQuery": {
-            "sha256Hash": PERSISTED_QUERY_HASH,
-            "version": 1
-        }
-    }
+
 
 def fetch_page(after_cursor=None):
     payload = {
