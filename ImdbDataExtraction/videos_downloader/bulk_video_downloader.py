@@ -1,8 +1,7 @@
 import os
-import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from extract_video_ids_from_gallery import get_all_title_videos
-from download_video_from_id import extract_video_data, download_video, get_imdb_page
+from download_video_from_id import get_video_data_graphql, download_video
 
 def download_single_video(video_info, output_dir):
     """Download a single video by ID"""
@@ -10,12 +9,8 @@ def download_single_video(video_info, output_dir):
     video_name = video_info['name']
     
     try:
-        # Get video page
-        video_url = f"https://www.imdb.com/video/{video_id}/"
-        html_content = get_imdb_page(video_url)
-        
-        # Extract download URLs
-        video_urls, title = extract_video_data(html_content)
+        # Fetch playback URLs via GraphQL
+        video_urls, _title = get_video_data_graphql(video_id)
         
         if video_urls:
             # Download highest quality
@@ -35,7 +30,7 @@ def download_single_video(video_info, output_dir):
         print(f"Error downloading {video_id}: {e}")
         return {'id': video_id, 'name': video_name, 'success': False, 'error': str(e)}
 
-def download_all_videos(title_id, max_workers=5):
+def download_all_videos(title_id, max_workers=5, limit=50, max_pages=None):
     """Download all videos for a title using multithreading"""
     # Create output directory
     output_dir = f"videos_{title_id}"
@@ -43,7 +38,7 @@ def download_all_videos(title_id, max_workers=5):
     
     # Get all video IDs
     print(f"Fetching video list for {title_id}...")
-    videos = get_all_title_videos(title_id)
+    videos = get_all_title_videos(title_id, limit=limit, max_pages=max_pages)
     print(f"Found {len(videos)} videos to download")
     
     # Download with threading
@@ -72,5 +67,18 @@ def download_all_videos(title_id, max_workers=5):
     print(f"Output directory: {output_dir}")
 
 if __name__ == "__main__":
-    title_id = "tt0944947"  # Game of Thrones
-    download_all_videos(title_id, max_workers=25)
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Download all videos for an IMDb title")
+    parser.add_argument("title_id", help="IMDb title ID (e.g., tt0944947)")
+    parser.add_argument("--max-workers", type=int, default=25, help="Thread pool size")
+    parser.add_argument("--limit", type=int, default=50, help="Videos per page")
+    parser.add_argument("--max-pages", type=int, help="Maximum pages to fetch")
+    args = parser.parse_args()
+
+    download_all_videos(
+        args.title_id,
+        max_workers=args.max_workers,
+        limit=args.limit,
+        max_pages=args.max_pages
+    )

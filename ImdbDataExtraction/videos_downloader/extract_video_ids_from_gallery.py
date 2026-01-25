@@ -1,7 +1,14 @@
-import requests
+import argparse
 import json
+try:
+    import requests
+except ModuleNotFoundError as e:
+    raise ModuleNotFoundError(
+        "Missing dependency 'requests'. Install dependencies from the repo root with: "
+        "python -m pip install -r requirements.txt"
+    ) from e
 
-def get_title_videos_page(title_id, after_cursor=None):
+def get_title_videos_page(title_id, after_cursor=None, limit=50):
     """Get one page of videos for a title using GraphQL API"""
     url = "https://caching.graphql.imdb.com/"
     
@@ -19,7 +26,7 @@ def get_title_videos_page(title_id, after_cursor=None):
     
     variables = {
         "const": title_id,
-        "first": 50,
+        "first": limit,
         "sort": {"by": "DATE", "order": "DESC"},
         "filter": {"nameConstraints": {}, "titleConstraints": {}, "maturityLevel": "INCLUDE_MATURE"}
     }
@@ -72,17 +79,21 @@ def get_title_videos_page(title_id, after_cursor=None):
     response.raise_for_status()
     return response.json()
 
-def get_all_title_videos(title_id):
+def get_all_title_videos(title_id, limit=50, max_pages=None):
     """Get all videos for a title using pagination"""
     all_videos = []
     cursor = None
+    page = 1
     
     while True:
-        data = get_title_videos_page(title_id, cursor)
+        data = get_title_videos_page(title_id, cursor, limit)
         videos = extract_video_ids(data)
         all_videos.extend(videos)
         
         print(f"Fetched {len(videos)} videos, total: {len(all_videos)}")
+
+        if max_pages and page >= max_pages:
+            break
         
         # Check if there's more data
         try:
@@ -91,6 +102,8 @@ def get_all_title_videos(title_id):
                 break
         except KeyError:
             break
+
+        page += 1
     
     return all_videos
 
@@ -162,10 +175,15 @@ def get_video_urls(video_id):
         return []
 
 if __name__ == "__main__":
-    title_id = "tt0944947"  # Game of Thrones
-    
-    videos = get_all_title_videos(title_id)
-    
+    parser = argparse.ArgumentParser(description="Extract video IDs for an IMDb title")
+    parser.add_argument("title_id", help="IMDb title ID (e.g., tt0944947)")
+    parser.add_argument("--limit", type=int, default=50, help="Videos per page")
+    parser.add_argument("--max-pages", type=int, help="Maximum pages to fetch")
+    parser.add_argument("--output", help="Output JSON file path")
+    args = parser.parse_args()
+
+    videos = get_all_title_videos(args.title_id, limit=args.limit, max_pages=args.max_pages)
+
     print(f"\nTotal videos found: {len(videos)}")
     for i, video in enumerate(videos[:5]):  # Show first 5 with URLs
         print(f"{i+1}. ID: {video['id']}, Name: {video['name']}, Type: {video['type']}")
@@ -173,8 +191,8 @@ if __name__ == "__main__":
             for url_info in video['urls']:
                 print(f"   - {url_info['quality']}: {url_info['url'][:80]}...")
         print()
-    
-    # Save to JSON file
-    with open(f"{title_id}_videos.json", 'w') as f:
+
+    output_path = args.output or f"{args.title_id}_videos.json"
+    with open(output_path, 'w') as f:
         json.dump(videos, f, indent=2)
-    print(f"\nSaved all videos to {title_id}_videos.json")
+    print(f"\nSaved all videos to {output_path}")

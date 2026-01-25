@@ -10,19 +10,32 @@ HEADERS = {
     'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36'
 }
 
-def get_season_episodes(series_id, season_number, after_cursor=None, limit=50):
-    """Get episodes for a specific season of a TV series"""
-    variables = {"id": series_id, "first": limit}
-    if after_cursor:
-        variables["after"] = after_cursor
-    
-    payload = {
-        "query": """query GetSeasonEpisodes($id: ID!, $first: Int!, $after: ID) {
-          title(id: $id) {
-            episodes {
-              episodes(first: $first, after: $after) {
-                edges {
-                  node {
+def build_episode_fields(include_extended):
+    if include_extended:
+        return """
+                    id
+                    titleText { text }
+                    originalTitleText { text }
+                    titleType { text id }
+                    releaseYear { year }
+                    releaseDate { day month year }
+                    ratingsSummary { aggregateRating voteCount }
+                    plot { plotText { plainText } }
+                    primaryImage { url width height }
+                    runtime { seconds }
+                    genres { genres { text id } }
+                    certificate { rating }
+                    canHaveEpisodes
+                    isAdult
+                    series {
+                      episodeNumber {
+                        episodeNumber
+                        seasonNumber
+                      }
+                    }
+        """
+
+    return """
                     id
                     titleText { text }
                     releaseDate { day month year }
@@ -36,16 +49,38 @@ def get_season_episodes(series_id, season_number, after_cursor=None, limit=50):
                         seasonNumber
                       }
                     }
-                  }
-                }
-                pageInfo {
-                  hasNextPage
-                  endCursor
-                }
-              }
-            }
-          }
-        }""",
+    """
+
+def get_season_episodes(series_id, after_cursor=None, limit=50, include_extended=True):
+    """Get episodes for a TV series (all seasons, paginated)"""
+    variables = {"id": series_id, "first": limit}
+    if after_cursor:
+        variables["after"] = after_cursor
+
+    episode_fields = build_episode_fields(include_extended)
+
+    query = (
+        "query GetSeasonEpisodes($id: ID!, $first: Int!, $after: ID) {\n"
+        "  title(id: $id) {\n"
+        "    episodes {\n"
+        "      episodes(first: $first, after: $after) {\n"
+        "        edges {\n"
+        "          node {\n"
+        f"{episode_fields}"
+        "          }\n"
+        "        }\n"
+        "        pageInfo {\n"
+        "          hasNextPage\n"
+        "          endCursor\n"
+        "        }\n"
+        "      }\n"
+        "    }\n"
+        "  }\n"
+        "}\n"
+    )
+
+    payload = {
+        "query": query,
         "operationName": "GetSeasonEpisodes",
         "variables": variables
     }
@@ -80,7 +115,8 @@ def get_season_episodes(series_id, season_number, after_cursor=None, limit=50):
 def main():
     parser = argparse.ArgumentParser(description="Get episodes for a TV series season")
     parser.add_argument("series_id", help="IMDb series ID (e.g., tt0944947)")
-    parser.add_argument("season", type=int, nargs="?", help="Season number (ignored - returns all episodes)")
+    parser.add_argument("season", type=int, nargs="?", help="Season number to filter (optional)")
+    parser.add_argument("--basic", action="store_true", help="Use basic fields only")
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument("--pages", type=int, help="Number of pages to fetch (default: fetch all)")
     parser.add_argument("--limit", type=int, default=50, help="Episodes per page")
@@ -91,8 +127,15 @@ def main():
     after_cursor = None
     page = 1
     
+    include_extended = not args.basic
+
     while True:
-        episodes, page_info = get_season_episodes(args.series_id, args.season, after_cursor, args.limit)
+        episodes, page_info = get_season_episodes(
+            args.series_id,
+            after_cursor,
+            args.limit,
+            include_extended=include_extended
+        )
         all_episodes.extend(episodes)
         
         print(f"Page {page}: Found {len(episodes)} episodes")
@@ -109,6 +152,12 @@ def main():
         after_cursor = page_info.get("endCursor")
         page += 1
     
+    if args.season:
+        all_episodes = [
+            episode for episode in all_episodes
+            if (episode.get("series") or {}).get("episodeNumber", {}).get("seasonNumber") == args.season
+        ]
+
     if args.json:
         print(json.dumps(all_episodes, indent=2))
     else:
@@ -128,6 +177,7 @@ def main():
             
             ratings_data = episode_data.get("ratingsSummary")
             rating = ratings_data.get("aggregateRating", "N/A") if ratings_data else "N/A"
+            vote_count = ratings_data.get("voteCount") if ratings_data else None
             
             # Runtime
             runtime_data = episode_data.get("runtime")
@@ -145,7 +195,17 @@ def main():
                 date_str = "N/A"
             
             print(f"S{season_num}E{episode_num:02d}. {title}" if isinstance(episode_num, int) else f"S{season_num}E{episode_num}. {title}")
-            print(f"     📅 {date_str} | ⭐ {rating} | ⏱️ {runtime}")
+            rating_line = f"     📅 {date_str} | ⭐ {rating}"
+            if vote_count is not None:
+                rating_line += f" ({vote_count} votes)"
+            rating_line += f" | ⏱️ {runtime}"
+            print(rating_line)
+
+            # Genres
+            genres_data = episode_data.get("genres", {}).get("genres", [])
+            genres = [genre.get("text") for genre in genres_data if genre and genre.get("text")]
+            if genres:
+                print(f"     🎭 {', '.join(genres)}")
             
             # Plot
             plot_data = episode_data.get("plot")
