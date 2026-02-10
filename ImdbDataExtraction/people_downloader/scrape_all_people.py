@@ -193,7 +193,7 @@ def extract_people(data):
             if not name_data or not name_data.get("nameText"):
                 continue
                 
-            name_text = name_data.get("nameText", {}).get("text")
+            name_text = name_data.get("nameText", {}).get("text") if name_data.get("nameText") else None
             if not name_text:
                 continue
             
@@ -202,7 +202,7 @@ def extract_people(data):
             prof_data = name_data.get("primaryProfessions", [])
             if prof_data:
                 for prof in prof_data:
-                    if prof and prof.get("category", {}) and prof.get("category", {}).get("text"):
+                    if prof and prof.get("category") and prof.get("category", {}).get("text") if prof.get("category") else None:
                         professions.append({
                             "text": prof["category"]["text"],
                             "id": prof["category"].get("id")

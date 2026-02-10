@@ -202,7 +202,7 @@ def main():
             print(rating_line)
 
             # Genres
-            genres_data = episode_data.get("genres", {}).get("genres", [])
+            genres_data = episode_data.get("genres", {}).get("genres", []) if episode_data.get("genres") else []
             genres = [genre.get("text") for genre in genres_data if genre and genre.get("text")]
             if genres:
                 print(f"     🎭 {', '.join(genres)}")
@@ -211,7 +211,7 @@ def main():
             plot_data = episode_data.get("plot")
             plot = ""
             if plot_data and plot_data.get("plotText"):
-                plot = plot_data.get("plotText", {}).get("plainText", "")
+                plot = plot_data.get("plotText", {}).get("plainText", "") if plot_data.get("plotText") else ""
             
             if plot:
                 plot_short = plot[:100] + "..." if len(plot) > 100 else plot

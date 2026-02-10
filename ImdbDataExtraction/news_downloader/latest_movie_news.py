@@ -103,11 +103,11 @@ def html_to_text(value):
 
 def extract_news_items(data, plain_text=False):
     items = []
-    edges = data.get("data", {}).get("news", {}).get("edges", [])
+    edges = data.get("data", {}).get("news", {}).get("edges", []) if data.get("data", {}).get("news") else []
     for edge in edges:
         node = edge.get("node", {})
-        article_title = node.get("articleTitle", {}).get("plainText")
-        source = node.get("source", {}).get("homepage", {})
+        article_title = node.get("articleTitle", {}).get("plainText") if node.get("articleTitle") else None
+        source = node.get("source", {}).get("homepage", {}) if node.get("source") else {}
         text_html = (node.get("text") or {}).get("plaidHtml")
 
         item = {
@@ -116,7 +116,7 @@ def extract_news_items(data, plain_text=False):
             "url": node.get("externalUrl"),
             "source_label": source.get("label"),
             "source_url": source.get("url"),
-            "source_trusted": node.get("source", {}).get("trustedSource"),
+            "source_trusted": node.get("source", {}).get("trustedSource") if node.get("source") else None,
             "published_at": node.get("date"),
             "byline": node.get("byline"),
             "text_html": text_html,

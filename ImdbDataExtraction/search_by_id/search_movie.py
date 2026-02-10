@@ -353,10 +353,10 @@ def format_movie_details(data):
     
     # Basic info
     movie_id = title_data.get("id")
-    title = title_data.get("titleText", {}).get("text")
-    original_title = title_data.get("originalTitleText", {}).get("text")
-    title_type = title_data.get("titleType", {}).get("text")
-    release_year = title_data.get("releaseYear", {}).get("year")
+    title = title_data.get("titleText", {}).get("text") if title_data.get("titleText") else None
+    original_title = title_data.get("originalTitleText", {}).get("text") if title_data.get("originalTitleText") else None
+    title_type = title_data.get("titleType", {}).get("text") if title_data.get("titleType") else None
+    release_year = title_data.get("releaseYear", {}).get("year") if title_data.get("releaseYear") else None
     
     # Release date
     release_date = title_data.get("releaseDate")
@@ -377,6 +377,14 @@ def format_movie_details(data):
     ratings = title_data.get("ratingsSummary")
     rating = ratings.get("aggregateRating") if ratings else None
     vote_count = ratings.get("voteCount") if ratings else None
+    
+    # Metascore
+    metacritic_data = title_data.get("metacritic")
+    metascore = None
+    if metacritic_data:
+        meta_score_data = metacritic_data.get("metascore")
+        if meta_score_data:
+            metascore = meta_score_data.get("score")
     
     # Genres
     genres = []
@@ -444,13 +452,13 @@ def format_movie_details(data):
     credits_by_category = {}
     principal_credits = title_data.get("principalCredits", [])
     for credit_group in principal_credits:
-        category = credit_group.get("category", {}).get("text", "Unknown")
+        category = credit_group.get("category", {}).get("text", "Unknown") if credit_group.get("category") else "Unknown"
         credits = credit_group.get("credits", [])
         
         category_credits = []
         for credit in credits:
             name_info = credit.get("name", {})
-            name = name_info.get("nameText", {}).get("text")
+            name = name_info.get("nameText", {}).get("text") if name_info.get("nameText") else None
             name_id = name_info.get("id")
             
             # Character info for cast
@@ -473,22 +481,16 @@ def format_movie_details(data):
         if category_credits:
             credits_by_category[category] = category_credits
     
-    # Additional data extraction
-    
-    # Metacritic score
-    metacritic_data = title_data.get("metacritic")
-    metascore = None
-    if metacritic_data and isinstance(metacritic_data, dict):
-        meta_score_data = metacritic_data.get("metascore")
-        if meta_score_data and isinstance(meta_score_data, dict):
-            metascore = meta_score_data.get("score")
-    
     # Image and video counts
     images_data = title_data.get("imageCount")
     image_count = images_data.get("total") if images_data else None
     
     videos_data = title_data.get("videoCount")
     video_count = videos_data.get("total") if videos_data else None
+    
+    # Meter ranking
+    meter_data = title_data.get("meterRanking")
+    current_rank = meter_data.get("currentRank") if meter_data else None
     
     # Company credits
     companies = {}
@@ -545,10 +547,6 @@ def format_movie_details(data):
     
     # Additional comprehensive data
     
-    # Meter ranking
-    meter_data = title_data.get("meterRanking")
-    current_rank = meter_data.get("currentRank") if meter_data else None
-    
     # Keywords
     keywords = []
     keyword_data = title_data.get("keywords")
@@ -571,7 +569,7 @@ def format_movie_details(data):
         
         for playback in playback_urls:
             if playback and playback.get("url"):
-                display_name = playback.get("displayName", {}).get("value", "")
+                display_name = playback.get("displayName", {}).get("value", "") if playback.get("displayName") else ""
                 if "480p" in display_name or "720p" in display_name:
                     trailer_url = playback.get("url")
                     break
@@ -592,7 +590,7 @@ def format_movie_details(data):
             "thumbnail": trailer_data.get("thumbnail", {}).get("url") if trailer_data.get("thumbnail") else None,
             "duration": trailer_data.get("runtime", {}).get("value") if trailer_data.get("runtime") else None,
             "uploadDate": trailer_data.get("createdDate"),
-            "contentType": trailer_data.get("contentType", {}).get("displayName", {}).get("value") if trailer_data.get("contentType") else None
+            "contentType": trailer_data.get("contentType", {}).get("displayName", {}).get("value") if trailer_data.get("contentType") and trailer_data.get("contentType", {}).get("displayName") else None
         }
     
     # Reviews count
@@ -611,9 +609,9 @@ def format_movie_details(data):
                 if associated_title:
                     connections.append({
                         "id": associated_title.get("id"),
-                        "title": associated_title.get("titleText", {}).get("text"),
-                        "year": associated_title.get("releaseYear", {}).get("year"),
-                        "relationship": node.get("category", {}).get("text")
+                        "title": associated_title.get("titleText", {}).get("text") if associated_title.get("titleText") else None,
+                        "year": associated_title.get("releaseYear", {}).get("year") if associated_title.get("releaseYear") else None,
+                        "relationship": node.get("category", {}).get("text") if node.get("category") else None
                     })
     
     # More like this titles
@@ -629,15 +627,15 @@ def format_movie_details(data):
                 
                 similar_titles.append({
                     "id": node.get("id"),
-                    "title": node.get("titleText", {}).get("text"),
-                    "year": node.get("releaseYear", {}).get("year"),
-                    "rating": node.get("ratingsSummary", {}).get("aggregateRating"),
+                    "title": node.get("titleText", {}).get("text") if node.get("titleText") else None,
+                    "year": node.get("releaseYear", {}).get("year") if node.get("releaseYear") else None,
+                    "rating": node.get("ratingsSummary", {}).get("aggregateRating") if node.get("ratingsSummary") else None,
                     "poster_url": poster_url
                 })
     
     # Additional title info
     is_adult = title_data.get("isAdult", False)
-    is_ratable = title_data.get("canRate", {}).get("isRatable", False)
+    is_ratable = title_data.get("canRate", {}).get("isRatable", False) if title_data.get("canRate") else False
     
     # Awards (limited to what's available)
     nominations_data = title_data.get("nominations")
@@ -693,12 +691,12 @@ def format_movie_details(data):
     enhanced_creators = []
     
     for credit_group in principal_credits:
-        category = credit_group.get("category", {}).get("text", "")
+        category = credit_group.get("category", {}).get("text", "") if credit_group.get("category") else ""
         credits = credit_group.get("credits", [])
         
         for credit in credits:
             name_info = credit.get("name", {})
-            name = name_info.get("nameText", {}).get("text")
+            name = name_info.get("nameText", {}).get("text") if name_info.get("nameText") else None
             name_id = name_info.get("id")
             profile_image = name_info.get("primaryImage", {}).get("url") if name_info.get("primaryImage") else None
             
@@ -1045,6 +1043,8 @@ def main():
     
     except Exception as e:
         print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()

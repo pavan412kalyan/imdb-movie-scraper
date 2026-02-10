@@ -113,12 +113,12 @@ def extract_videos(data):
             if node:
                 video_info = {
                     "id": node.get("id"),
-                    "name": node.get("name", {}).get("value"),
-                    "contentType": node.get("contentType", {}).get("displayName", {}).get("value"),
-                    "runtime": node.get("runtime", {}).get("value"),
+                    "name": node.get("name", {}).get("value") if node.get("name") else None,
+                    "contentType": node.get("contentType", {}).get("displayName", {}).get("value") if node.get("contentType") and node.get("contentType", {}).get("displayName") else None,
+                    "runtime": node.get("runtime", {}).get("value") if node.get("runtime") else None,
                     "thumbnail": {
-                        "url": node.get("thumbnail", {}).get("url"),
-                        "width": node.get("thumbnail", {}).get("width"),
+                        "url": node.get("thumbnail", {}).get("url") if node.get("thumbnail") else None,
+                        "width": node.get("thumbnail", {}).get("width") if node.get("thumbnail") else None,
                         "height": node.get("thumbnail", {}).get("height")
                     }
                 }

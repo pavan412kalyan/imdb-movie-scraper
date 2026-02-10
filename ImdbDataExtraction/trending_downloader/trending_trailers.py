@@ -78,14 +78,14 @@ def extract_trailer_data(data):
                 trailer = title["latestTrailer"]
                 trailer_info = {
                     "movie_id": title.get("id"),
-                    "movie_title": title.get("titleText", {}).get("text"),
+                    "movie_title": title.get("titleText", {}).get("text") if title.get("titleText") else None,
                     "trailer_id": trailer.get("id"),
-                    "trailer_name": trailer.get("name", {}).get("value"),
-                    "runtime": trailer.get("runtime", {}).get("value"),
-                    "description": trailer.get("description", {}).get("value"),
-                    "thumbnail_url": trailer.get("thumbnail", {}).get("url"),
-                    "thumbnail_width": trailer.get("thumbnail", {}).get("width"),
-                    "thumbnail_height": trailer.get("thumbnail", {}).get("height")
+                    "trailer_name": trailer.get("name", {}).get("value") if trailer.get("name") else None,
+                    "runtime": trailer.get("runtime", {}).get("value") if trailer.get("runtime") else None,
+                    "description": trailer.get("description", {}).get("value") if trailer.get("description") else None,
+                    "thumbnail_url": trailer.get("thumbnail", {}).get("url") if trailer.get("thumbnail") else None,
+                    "thumbnail_width": trailer.get("thumbnail", {}).get("width") if trailer.get("thumbnail") else None,
+                    "thumbnail_height": trailer.get("thumbnail", {}).get("height") if trailer.get("thumbnail") else None
                 }
                 trailers.append(trailer_info)
     

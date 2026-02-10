@@ -120,10 +120,10 @@ def extract_movie_ids(data):
         
         # Basic info
         movie_id = item.get("id")
-        title = item.get("titleText", {}).get("text")
-        original_title = item.get("originalTitleText", {}).get("text")
-        title_type = item.get("titleType", {}).get("text")
-        release_year = item.get("releaseYear", {}).get("year")
+        title = item.get("titleText", {}).get("text") if item.get("titleText") else None
+        original_title = item.get("originalTitleText", {}).get("text") if item.get("originalTitleText") else None
+        title_type = item.get("titleType", {}).get("text") if item.get("titleType") else None
+        release_year = item.get("releaseYear", {}).get("year") if item.get("releaseYear") else None
         
         # Release date
         release_date = item.get("releaseDate")
