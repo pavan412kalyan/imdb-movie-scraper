@@ -38,7 +38,7 @@ python3 scrape_all_movie_list.py --save-files --no-resume --output-dir all_imdb_
 ```
 
 For the full page downloader options, see:
-[ImdbDataExtraction/pages_dowloader/README.md](/Users/pavankalyanreddythota/Desktop/imdb-movie-scraper/ImdbDataExtraction/pages_dowloader/README.md)
+[ImdbDataExtraction/pages_dowloader/README.md](ImdbDataExtraction/pages_dowloader/README.md)
 
 ### Search and Lookup
 
@@ -59,6 +59,13 @@ python3 search_by_filters.py --genre Action --min-rating 7 --pages 2
 ### Trending, People, and Media
 
 ```bash
+# Top chart titles
+cd ImdbDataExtraction/chart_downloader/
+python3 chart_titles.py --chart top
+
+# IMDb list titles
+python3 list_titles.py ls039852437
+
 # Trending titles
 cd ImdbDataExtraction/trending_downloader/
 python3 trending_movies.py --count 10
@@ -76,6 +83,7 @@ python3 extract_video_ids_from_gallery.py
 
 ```text
 ImdbDataExtraction/
+├── chart_downloader/         # IMDb chart pages like Top 250 and popularity charts
 ├── pages_dowloader/          # Bulk movie/TV scraping with save and resume
 ├── search_by_id/             # Detailed single-title lookups
 ├── search_by_string/         # Text search
@@ -111,11 +119,6 @@ Most scripts write JSON. The bulk page downloader:
 - saves `imdb_page_<n>.json` files when `--save-files` is used
 - resumes from the last saved cursor when `--resume` is enabled
 - writes to `all_imdb_movies/` by default for the standard movie scrape
-
-## Data Sources
-
-- GraphQL: `https://caching.graphql.imdb.com/`
-- Suggestions API: `https://v3.sg.media-imdb.com/suggestion`
 
 ## Notes
 
