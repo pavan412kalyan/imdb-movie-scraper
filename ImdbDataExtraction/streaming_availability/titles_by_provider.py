@@ -161,7 +161,45 @@ _SHORT_NAMES = {
     "roku": "rokuchannel",
 }
 
-WATCH_PROVIDERS_QUERY = """query WatchProviders($first: Int!, $after: ID) {
+STREAMING_PROVIDERS_QUERY = """query StreamingProviders {
+  streamingTitles(filter: { providers: [] }) {
+    availableFilters {
+      ... on StreamingTitlesFilterableAttribute {
+        id
+        text
+        availableOptions {
+          id
+          text
+        }
+      }
+    }
+  }
+}"""
+
+# Fallback: discover providers by scraping a popular title's watch options per country
+POPULAR_TITLES_BY_COUNTRY = {
+    "IN": "tt0816692",  # Interstellar — widely available in India
+    "GB": "tt0816692",
+    "AU": "tt0816692",
+    "CA": "tt0816692",
+    "DE": "tt0816692",
+    "FR": "tt0816692",
+    "JP": "tt0816692",
+    "BR": "tt0816692",
+}
+
+
+def list_all_providers(country=DEFAULT_COUNTRY, locale=DEFAULT_LOCALE, timeout=DEFAULT_TIMEOUT):
+    """Fetch country-specific providers via the WatchProviders GraphQL query.
+    Falls back to scraping watch options from a popular title if the global
+    query returns US-only results.
+    """
+    headers = dict(HEADERS)
+    headers["x-imdb-user-country"] = country.upper()
+    headers["x-imdb-user-language"] = locale
+
+    # The watchProviders query is country-aware via the header
+    WATCH_PROVIDERS_QUERY = """query WatchProviders($first: Int!, $after: ID) {
   watchProviders(first: $first, after: $after) {
     edges {
       node {
@@ -177,21 +215,12 @@ WATCH_PROVIDERS_QUERY = """query WatchProviders($first: Int!, $after: ID) {
   }
 }"""
 
-
-def list_all_providers(country=DEFAULT_COUNTRY, locale=DEFAULT_LOCALE, timeout=DEFAULT_TIMEOUT):
-    """Fetch and print all available streaming providers from IMDb."""
-    headers = dict(HEADERS)
-    headers["x-imdb-user-country"] = country.upper()
-    headers["x-imdb-user-language"] = locale
-
     all_providers = []
     after_cursor = None
-
     while True:
         variables = {"first": 200}
         if after_cursor:
             variables["after"] = after_cursor
-
         payload = {
             "operationName": "WatchProviders",
             "query": WATCH_PROVIDERS_QUERY,
@@ -203,12 +232,10 @@ def list_all_providers(country=DEFAULT_COUNTRY, locale=DEFAULT_LOCALE, timeout=D
         data = response.json()
         if data.get("errors"):
             raise RuntimeError(f"GraphQL errors: {data['errors']}")
-
         conn = (data.get("data") or {}).get("watchProviders") or {}
         edges = conn.get("edges") or []
         for edge in edges:
             all_providers.append(edge.get("node") or {})
-
         page_info = conn.get("pageInfo") or {}
         if not page_info.get("hasNextPage"):
             break
@@ -216,11 +243,46 @@ def list_all_providers(country=DEFAULT_COUNTRY, locale=DEFAULT_LOCALE, timeout=D
         if not after_cursor:
             break
 
+    # watchProviders is a global catalog — supplement with country-specific
+    # providers discovered from a popular title's watch options
+    probe_title = POPULAR_TITLES_BY_COUNTRY.get(country.upper(), "tt0816692")
+    try:
+        probe_payload = {
+            "operationName": "HERO_WATCH_BOX",
+            "query": WATCH_QUERY,
+            "variables": {"id": probe_title},
+        }
+        probe_resp = requests.post(API_URL, headers=headers, json=probe_payload, timeout=timeout)
+        if probe_resp.ok:
+            probe_data = probe_resp.json()
+            categorized = (
+                ((probe_data.get("data") or {}).get("title") or {})
+                .get("watchOptionsByCategory") or {}
+            ).get("categorizedWatchOptionsList") or []
+            existing_ids = {p.get("id") for p in all_providers}
+            for category in categorized:
+                cat_name = ((category.get("categoryName") or {}).get("value")) or ""
+                for option in category.get("watchOptions") or []:
+                    provider = option.get("provider") or {}
+                    pid = provider.get("id")
+                    if pid and pid not in existing_ids:
+                        all_providers.append({
+                            "id": pid,
+                            "name": provider.get("name"),
+                            "refTagFragment": provider.get("refTagFragment"),
+                            "isPopular": False,
+                            "watchOptionCategoryType": cat_name,
+                        })
+                        existing_ids.add(pid)
+    except Exception:
+        pass
+
     print(f"\nAvailable providers (country: {country}) — {len(all_providers)} total\n")
     print(f"{'Provider ID':<50} {'Name':<30} {'Category':<15} {'Popular':<8} refTagFragment")
     print("-" * 140)
-    for p in sorted(all_providers, key=lambda x: (not x.get("isPopular"), (x.get("name") or {}).get("value", ""))):
-        name = (p.get("name") or {}).get("value", "")
+    for p in sorted(all_providers, key=lambda x: (not x.get("isPopular"), ((x.get("name") or {}).get("value", "") if isinstance(x.get("name"), dict) else (x.get("name") or "")))):
+        name_raw = p.get("name")
+        name = name_raw.get("value", "") if isinstance(name_raw, dict) else (name_raw or "")
         cat = p.get("watchOptionCategoryType") or ""
         popular = "yes" if p.get("isPopular") else ""
         print(f"{p.get('id', ''):<50} {name:<30} {cat:<15} {popular:<8} {p.get('refTagFragment', '')}")
