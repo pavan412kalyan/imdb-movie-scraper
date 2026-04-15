@@ -1,6 +1,6 @@
+import argparse
 import os
 import requests
-import urllib.parse
 import json
 import time
 import uuid
@@ -8,7 +8,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = "https://caching.graphql.imdb.com/"
 OPERATION_NAME = "TitleMediaIndexPagination"
-IMDB_ID = "tt0944947"
 
 HEADERS = {
     'accept': 'application/graphql+json, application/json',
@@ -28,16 +27,16 @@ HEADERS = {
     'x-imdb-user-language': 'en-US'
 }
 
-def get_variables(after_cursor):
+def get_variables(title_id, after_cursor):
     variables = {
-        "const": IMDB_ID,
+        "const": title_id,
         "first": 50
     }
     if after_cursor:
         variables["after"] = after_cursor
     return variables
 
-def fetch_page(after_cursor):
+def fetch_page(title_id, after_cursor):
     payload = {
         "query": """query TitleMediaIndexPagination($const: ID!, $first: Int!, $after: ID) {
           title(id: $const) {
@@ -58,7 +57,7 @@ def fetch_page(after_cursor):
           }
         }""",
         "operationName": OPERATION_NAME,
-        "variables": get_variables(after_cursor)
+        "variables": get_variables(title_id, after_cursor)
     }
     
     response = requests.post(BASE_URL, headers=HEADERS, json=payload)
@@ -89,15 +88,15 @@ def extract_images(data):
                 images.append(node["url"])
     return images
 
-def main(max_pages=10000):
+def main(title_id, max_pages=10000):
     after_cursor = ""
-    folder = f"images_{IMDB_ID}"
+    folder = f"images_{title_id}"
     os.makedirs(folder, exist_ok=True)
-    
+
     with ThreadPoolExecutor(max_workers=5) as executor:
         for page in range(1, max_pages + 1):
             print(f"\n📥 Fetching page {page}...")
-            data = fetch_page(after_cursor)
+            data = fetch_page(title_id, after_cursor)
 
             if "data" not in data or "title" not in data["data"] or "images" not in data["data"]["title"]:
                 print(f"❌ Invalid response structure on page {page}")
@@ -105,7 +104,7 @@ def main(max_pages=10000):
 
             images = extract_images(data)
             print(f"📸 Found {len(images)} images on page {page}, downloading...")
-            
+
             for img_url in images:
                 executor.submit(download_image, img_url, folder)
 
@@ -120,8 +119,13 @@ def main(max_pages=10000):
                 break
 
             time.sleep(1)
-    
+
     print(f"\n✅ Download complete! Images saved to {folder}/")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Download images for an IMDb title")
+    parser.add_argument("title_id", help="IMDb title ID (e.g., tt0944947)")
+    parser.add_argument("--max-pages", type=int, default=10000, help="Maximum pages to fetch")
+    args = parser.parse_args()
+
+    main(args.title_id, args.max_pages)
