@@ -76,6 +76,9 @@ POPULAR_TITLES_QUERY = """query GetPopularTitles(
             certifiedFresh
             jwRating
           }
+          externalIds {
+            imdbId
+          }
         }
         watchNowOffer(country: $country, platform: WEB, filter: $watchNowFilter) {
           standardWebURL
@@ -137,6 +140,7 @@ def list_providers(country=DEFAULT_COUNTRY, timeout=DEFAULT_TIMEOUT):
 def normalize(node, country):
     content = node.get("content") or {}
     scoring = content.get("scoring") or {}
+    external_ids = content.get("externalIds") or {}
     offer = node.get("watchNowOffer") or {}
     pkg = offer.get("package") or {}
     poster = content.get("posterUrl") or ""
@@ -158,6 +162,7 @@ def normalize(node, country):
         "tomato_meter": scoring.get("tomatoMeter"),
         "certified_fresh": scoring.get("certifiedFresh"),
         "jw_rating": scoring.get("jwRating"),
+        "imdb_id": external_ids.get("imdbId"),
         "watch_url": offer.get("standardWebURL"),
         "monetization_type": offer.get("monetizationType"),
         "presentation_type": offer.get("presentationType"),

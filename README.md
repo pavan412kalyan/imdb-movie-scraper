@@ -18,6 +18,9 @@ Related published resources:
 - Search by free text and filters
 - People scraping
 - Reviews, images, videos, seasons, news, and trending data
+- Streaming availability and provider lookup (Netflix, Prime Video, Disney+, and 40+ more)
+- JustWatch-style provider → titles search with filters
+- JustWatch popular titles by provider and country (direct JustWatch GraphQL API, full catalog)
 - JSON output suitable for downstream pipelines
 
 ## Main Workflows
@@ -55,6 +58,58 @@ python3 search_by_string.py "batman" --limit 10
 cd ../search_by_filters/
 python3 search_by_filters.py --genre Action --min-rating 7 --pages 2
 ```
+
+### Streaming Availability
+
+```bash
+cd ImdbDataExtraction/streaming_availability/
+
+# Check where a title is streaming (JustWatch-style lookup)
+python3 streaming_checker.py --title tt0899043
+
+# All titles on Netflix in the US
+python3 titles_by_provider.py netflix
+
+# Movies on Prime Video in the UK with rating >= 7, save to file
+python3 titles_by_provider.py amazon_prime_video --country GB --type movie --min-rating 7 --output prime_uk.json
+
+# Disney+ TV series, print as JSON
+python3 titles_by_provider.py disney_plus --type tvSeries --json
+
+# List all available providers for a country
+python3 titles_by_provider.py --list-all-providers --country US
+
+# Discover which providers carry a specific title
+python3 titles_by_provider.py --list-providers tt10919420 --country US
+```
+
+Supported short provider names: `netflix`, `amazon_prime_video`, `disney_plus`, `hulu`, `max`, `apple_tv_plus`, `paramount_plus`, `peacock`, `starz`, `roku`, and more. See [streaming_availability/README.md](ImdbDataExtraction/streaming_availability/README.md) for the full provider list and filter options.
+
+### JustWatch
+
+```bash
+cd ImdbDataExtraction/justwatch_downloader/
+
+# List available providers for a country
+python3 justwatch_popular.py --list-providers --country US
+python3 justwatch_popular.py --list-providers --country IN
+
+# Popular titles on Netflix India
+python3 justwatch_popular.py --country IN --providers nfx
+
+# Netflix + Prime Video India, IMDb rating >= 7
+python3 justwatch_popular.py --country IN --providers nfx amp --min-rating 7
+
+# HBO Max US, movies only, 3 pages, save to file
+python3 justwatch_popular.py --country US --providers hoc --type MOVIE --pages 3 --output hbo_us.json
+
+# Disney+ TV series in the UK, print as JSON
+python3 justwatch_popular.py --country GB --providers dnp --type SHOW --json
+```
+
+Common provider short names: `nfx` (Netflix), `amp` (Prime Video), `hoc` (HBO Max), `dnp` (Disney+), `hlu` (Hulu), `ppe` (Apple TV+), `pct` (Paramount+). See [justwatch_downloader/README.md](ImdbDataExtraction/justwatch_downloader/README.md) for the full list.
+
+> Unlike the IMDb streaming availability scripts, this uses the JustWatch
 
 ### Trending, People, and Media
 
@@ -94,7 +149,8 @@ ImdbDataExtraction/
 ├── review_downloader/        # Reviews
 ├── news_downloader/          # News
 ├── season_episodes/          # Episode data
-├── streaming_availability/   # Streaming info
+├── streaming_availability/   # Streaming availability and provider lookup via IMDb
+├── justwatch_downloader/     # Popular titles by provider via JustWatch
 └── trending_downloader/      # Trending titles and trailers
 ```
 
