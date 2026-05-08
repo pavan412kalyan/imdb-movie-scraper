@@ -21,6 +21,7 @@ Related published resources:
 - Streaming availability and provider lookup (Netflix, Prime Video, Disney+, and 40+ more)
 - JustWatch-style provider → titles search with filters
 - JustWatch popular titles by provider and country (direct JustWatch GraphQL API, full catalog)
+- Rotten Tomatoes discovery-sidebar title modules, title search, and reviews
 - JSON output suitable for downstream pipelines
 
 ## Main Workflows
@@ -111,6 +112,35 @@ Common provider short names: `nfx` (Netflix), `amp` (Prime Video), `hoc` (HBO Ma
 
 > Unlike the IMDb streaming availability scripts, this uses the JustWatch
 
+### Rotten Tomatoes
+
+```bash
+cd ImdbDataExtraction/rottentomatoes_downloader/
+
+# Discovery sidebar: TV series currently airing
+python3 rt_discovery_sidebar.py
+
+# Save airing TV series to JSON
+python3 rt_discovery_sidebar.py --media-type tvSeries --status AIRING --output rt_airing_tv.json
+
+# Print the raw cnapi response
+python3 rt_discovery_sidebar.py --raw --json
+
+# URL-based title extraction
+python3 rt_title_page.py https://www.rottentomatoes.com/tv/margos_got_money_troubles --json
+
+# Rotten Tomatoes site search
+python3 rt_search.py "finding nemo" --hits-per-page 5 --json
+
+# Rotten Tomatoes reviews
+python3 rt_reviews.py https://www.rottentomatoes.com/m/finding_nemo --type critic --limit 25 --output finding_nemo_critics.json
+python3 rt_reviews.py https://www.rottentomatoes.com/m/finding_nemo --type audience --limit 50 --output finding_nemo_audience.json
+
+# Rotten Tomatoes reviews from an IMDb title ID
+python3 rt_reviews_by_imdb.py tt0266543 --show-candidates
+python3 rt_reviews_by_imdb.py tt0266543 --type critic --limit 25 --output finding_nemo_rt_critics.json
+```
+
 ### Trending, People, and Media
 
 ```bash
@@ -151,6 +181,7 @@ ImdbDataExtraction/
 ├── season_episodes/          # Episode data
 ├── streaming_availability/   # Streaming availability and provider lookup via IMDb
 ├── justwatch_downloader/     # Popular titles by provider via JustWatch
+├── rottentomatoes_downloader/ # Rotten Tomatoes cnapi modules, title pages, search, reviews
 └── trending_downloader/      # Trending titles and trailers
 ```
 
