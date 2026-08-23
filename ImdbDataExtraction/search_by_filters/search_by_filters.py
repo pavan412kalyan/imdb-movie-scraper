@@ -84,20 +84,24 @@ def search_by_genre(target_genre="Action", limit=50, languages=None, min_year=No
     headers = {
         "accept": "application/graphql+json, application/json",
         "content-type": "application/json",
+        "origin": "https://www.imdb.com",
+        "referer": "https://www.imdb.com/",
         "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36"
     }
     
     response = requests.post(url, headers=headers, json=payload)
     
-    if response.status_code == 200:
-        data = response.json()
-        if 'errors' in data:
-            print(f"❌ GraphQL errors: {data['errors']}")
-        search_data = data.get("data", {}).get("advancedTitleSearch", {})
-        return search_data.get("edges", []), search_data.get("pageInfo", {})
-    else:
-        print(f"❌ Error: {response.status_code}")
-        return [], {}
+    if response.status_code != 200:
+        print(f"❌ HTTP error from IMDb GraphQL: {response.status_code}")
+        print(f"Response: {response.text[:500]}")
+        response.raise_for_status()
+
+    data = response.json()
+    if 'errors' in data:
+        raise RuntimeError(f"GraphQL errors: {data['errors']}")
+
+    search_data = data.get("data", {}).get("advancedTitleSearch", {})
+    return search_data.get("edges", []), search_data.get("pageInfo", {})
 
 def main():
     parser = argparse.ArgumentParser(description="Search IMDb movies with filters")
@@ -117,17 +121,22 @@ def main():
     after_cursor = None
     
     for page in range(args.pages):
-        movies, page_info = search_by_genre(
-            target_genre=args.genre,
-            limit=args.limit,
-            languages=args.languages,
-            min_year=args.min_year,
-            max_year=args.max_year,
-            min_rating=args.min_rating,
-            max_rating=args.max_rating,
-            title_type=args.type,
-            after_cursor=after_cursor
-        )
+        try:
+            movies, page_info = search_by_genre(
+                target_genre=args.genre,
+                limit=args.limit,
+                languages=args.languages,
+                min_year=args.min_year,
+                max_year=args.max_year,
+                min_rating=args.min_rating,
+                max_rating=args.max_rating,
+                title_type=args.type,
+                after_cursor=after_cursor
+            )
+        except requests.HTTPError as e:
+            raise SystemExit(f"Aborted: IMDb request failed ({e})")
+        except RuntimeError as e:
+            raise SystemExit(f"Aborted: {e}")
         
         all_movies.extend(movies)
         
