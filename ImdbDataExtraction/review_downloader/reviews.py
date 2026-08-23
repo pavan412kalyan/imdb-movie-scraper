@@ -15,6 +15,7 @@ HEADERS = {
     'accept-language': 'en-US,en;q=0.9',
     'content-type': 'application/json',
     'origin': 'https://www.imdb.com',
+    'referer': 'https://www.imdb.com/',
     'priority': 'u=1, i'
 }
 

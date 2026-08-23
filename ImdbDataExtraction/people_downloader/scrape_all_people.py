@@ -16,6 +16,7 @@ HEADERS = {
     'accept-language': 'en-US,en;q=0.9',
     'content-type': 'application/json',
     'origin': 'https://www.imdb.com',
+    'referer': 'https://www.imdb.com/',
     'priority': 'u=1, i',
     'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36'
 }
@@ -175,6 +176,32 @@ def fetch_page(after_cursor=None):
     response.raise_for_status()
     return response.json()
 
+
+def format_partial_date(date_data):
+    """Format IMDb dateComponents while preserving known partial values."""
+    if not date_data or not date_data.get("dateComponents"):
+        return None
+
+    date_comp = date_data.get("dateComponents") or {}
+    year = date_comp.get("year")
+    month = date_comp.get("month")
+    day = date_comp.get("day")
+
+    if not year:
+        if month and day:
+            return f"--{month:02d}-{day:02d}"
+        if month:
+            return f"--{month:02d}"
+        return None
+
+    date_parts = [str(year)]
+    if month:
+        date_parts.append(f"{month:02d}")
+    if month and day:
+        date_parts.append(f"{day:02d}")
+    return "-".join(date_parts)
+
+
 def extract_people(data):
     """Extract people names from the response"""
     try:
@@ -223,26 +250,9 @@ def extract_people(data):
                             "rating": title.get("ratingsSummary", {}).get("aggregateRating") if title.get("ratingsSummary") else None
                         })
             
-            # Extract birth/death dates
-            birth_date = None
-            birth_data = name_data.get("birthDate")
-            if birth_data and birth_data.get("dateComponents"):
-                date_comp = birth_data.get("dateComponents")
-                year = date_comp.get('year')
-                month = date_comp.get('month', 1)
-                day = date_comp.get('day', 1)
-                if year:
-                    birth_date = f"{year}-{month:02d}-{day:02d}"
-            
-            death_date = None
-            death_data = name_data.get("deathDate")
-            if death_data and death_data.get("dateComponents"):
-                date_comp = death_data.get("dateComponents")
-                year = date_comp.get('year')
-                month = date_comp.get('month', 1)
-                day = date_comp.get('day', 1)
-                if year:
-                    death_date = f"{year}-{month:02d}-{day:02d}"
+            # Extract birth/death dates. IMDb may redact individual components.
+            birth_date = format_partial_date(name_data.get("birthDate"))
+            death_date = format_partial_date(name_data.get("deathDate"))
             
             # Extract image with dimensions
             primary_image = name_data.get("primaryImage")

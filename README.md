@@ -207,6 +207,9 @@ Most scripts write JSON. The bulk page downloader:
 - resumes from the last saved cursor when `--resume` is enabled
 - writes to `all_imdb_movies/` by default for the standard movie scrape
 
+Partial IMDb dates retain the available components: `YYYY-MM` or `YYYY` when
+month/day are missing, and `--MM-DD` when IMDb redacts the year.
+
 ## Notes
 
 - This project is intended for educational and research use.

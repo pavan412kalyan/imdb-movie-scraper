@@ -7,6 +7,8 @@ BASE_URL = "https://caching.graphql.imdb.com/"
 HEADERS = {
     'accept': 'application/graphql+json, application/json',
     'content-type': 'application/json',
+    'origin': 'https://www.imdb.com',
+    'referer': 'https://www.imdb.com/',
     'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36'
 }
 
@@ -91,26 +93,19 @@ def get_season_episodes(series_id, after_cursor=None, limit=50, include_extended
     
     print(f"📡 Response status: {response.status_code}")
     
-    if response.status_code == 200:
-        data = response.json()
-        if 'errors' in data:
-            print(f"❌ GraphQL errors: {data['errors']}")
-        episodes_container = data.get("data", {}).get("title", {}).get("episodes", {})
-        episodes_info = episodes_container.get("episodes", {})
-        episodes_data = episodes_info.get("edges", [])
-        page_info = episodes_info.get("pageInfo", {})
-        
-        # Return all episodes without season filtering
-        episodes = []
-        for edge in episodes_data:
-            episode = edge.get("node", {})
-            episodes.append(episode)
-        
-        return episodes, page_info
-    else:
+    if response.status_code != 200:
         print(f"❌ Error: {response.status_code}")
         print(f"📄 Response text: {response.text}")
-        return [], {}
+        response.raise_for_status()
+
+    data = response.json()
+    if 'errors' in data:
+        raise RuntimeError(f"IMDb GraphQL errors: {data['errors']}")
+
+    episodes_container = data.get("data", {}).get("title", {}).get("episodes", {})
+    episodes_info = episodes_container.get("episodes", {})
+    episodes = [edge.get("node", {}) for edge in episodes_info.get("edges", [])]
+    return episodes, episodes_info.get("pageInfo", {})
 
 def main():
     parser = argparse.ArgumentParser(description="Get episodes for a TV series season")
