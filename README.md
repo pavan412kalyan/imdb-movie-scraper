@@ -2,8 +2,6 @@
 
 IMDb scraping toolkit for collecting titles, people, reviews, videos, images, trending data, and related metadata.
 
-Live demo:
-https://realimdb.netlify.app/
 
 Related published resources:
 - Apify actor: `direwolflabs/imdb-deep-crawler`
