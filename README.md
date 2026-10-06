@@ -212,3 +212,31 @@ month/day are missing, and `--MM-DD` when IMDb redacts the year.
 
 - This project is intended for educational and research use.
 - Respect IMDb rate limits and terms of service.
+
+## Tests
+
+Run the offline title-lookup regression tests (live tests are skipped):
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Opt in to live title-lookup integration tests:
+
+```bash
+IMDB_LIVE_TESTS=1 python3 -m unittest discover -s tests -v
+```
+
+The live tests make three IMDb requests: the issue #32 title (`tt39123235`),
+The Shawshank Redemption (`tt0111161`), and a CLI lookup that validates saved
+JSON in a temporary directory. They verify returned IDs, titles, and character
+credits against the live response. Requests have a 30-second timeout and the CLI
+check has a 45-second limit. Network failures, HTTP blocks, and GraphQL errors
+fail the tests; they are not silently skipped. Live data can change, so the
+offline tests retain deterministic coverage for null character lists.
+
+For the broader existing scraper checks:
+
+```bash
+python3 live_integration_check.py
+```
