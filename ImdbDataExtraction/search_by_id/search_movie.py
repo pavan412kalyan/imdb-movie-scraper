@@ -3,6 +3,7 @@
 Search movie by IMDb ID and get detailed information
 """
 import os
+import sys
 import requests
 import json
 import argparse
@@ -340,7 +341,13 @@ def get_movie_details(movie_id):
         }
     }
     
-    response = requests.post(BASE_URL, headers=HEADERS, json=payload)
+    response = requests.post(BASE_URL, headers=HEADERS, json=payload, timeout=30)
+    if response.status_code == 403:
+        raise requests.HTTPError(
+            "IMDb denied the details request (HTTP 403 Forbidden). "
+            "No title details were retrieved. Try again later.",
+            response=response,
+        )
     if response.status_code != 200:
         print(f"Response: {response.text}")
     response.raise_for_status()
@@ -464,9 +471,8 @@ def format_movie_details(data):
             
             # Character info for cast
             characters = []
-            if "characters" in credit:
-                for char in credit.get("characters", []):
-                    characters.append(char.get("name"))
+            for char in credit.get("characters") or []:
+                characters.append(char.get("name"))
             
             if name:
                 profile_image = name_info.get("primaryImage", {}).get("url") if name_info.get("primaryImage") else None
@@ -710,10 +716,9 @@ def format_movie_details(data):
                 
                 if category == "Stars":
                     characters = []
-                    if "characters" in credit:
-                        for char in credit.get("characters", []):
-                            if char.get("name"):
-                                characters.append(char.get("name"))
+                    for char in credit.get("characters") or []:
+                        if char.get("name"):
+                            characters.append(char.get("name"))
                     person_data["characters"] = characters
                     enhanced_actors.append(person_data)
                 elif category == "Director":
@@ -1029,8 +1034,8 @@ def main():
         movie = format_movie_details(data)
         
         if not movie:
-            print("Movie not found or error in response")
-            return
+            print("Movie not found or error in response", file=sys.stderr)
+            return 1
         
         if args.output:
             save_movie_data(movie, args.output)
@@ -1042,10 +1047,15 @@ def main():
         if not args.json_only:
             display_movie_info(movie)
     
+    except requests.RequestException as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error: {e}", file=sys.stderr)
         import traceback
         traceback.print_exc()
+        return 1
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
