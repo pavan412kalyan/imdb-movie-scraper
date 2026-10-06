@@ -78,7 +78,7 @@ def get_movie_details(movie_id):
                 plainText
               }
             }
-            imageCount: images {
+            imageCount: images(first: 1) {
               total
             }
             videoCount: videos {
@@ -146,7 +146,7 @@ def get_movie_details(movie_id):
               }
             }
             episodes {
-              episodes {
+              episodes(first: 1) {
                 total
               }
             }
@@ -157,7 +157,7 @@ def get_movie_details(movie_id):
                 }
               }
             }
-            companyCredits {
+            companyCredits(first: 20) {
               edges {
                 node {
                   company {
@@ -192,7 +192,7 @@ def get_movie_details(movie_id):
 
 
 
-            akas {
+            akas(first: 20) {
               edges {
                 node {
                   text
@@ -209,7 +209,7 @@ def get_movie_details(movie_id):
                 difference
               }
             }
-            keywords {
+            keywords(first: 20) {
               edges {
                 node {
                   text
@@ -243,7 +243,7 @@ def get_movie_details(movie_id):
             reviews(first: 1) {
               total
             }
-            connections {
+            connections(first: 20) {
               edges {
                 node {
                   associatedTitle {
@@ -298,7 +298,7 @@ def get_movie_details(movie_id):
                 }
               }
             }
-            nominations {
+            nominations(first: 1) {
               total
             }
             canHaveEpisodes
