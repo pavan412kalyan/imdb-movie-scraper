@@ -1,3 +1,4 @@
+from ImdbDataExtraction.utils import GRAPHQL_API_URL, get_graphql_headers
 import requests
 import json
 import argparse
@@ -5,7 +6,7 @@ import argparse
 def get_streaming_availability(title_id):
     """Get streaming availability for a single title ID"""
     
-    url = "https://api.graphql.imdb.com/"
+    url = GRAPHQL_API_URL
     
     variables = {
         "id": title_id
@@ -70,14 +71,7 @@ def get_streaming_availability(title_id):
         "variables": variables
     }
     
-    headers = {
-        "accept": "application/graphql+json, application/json",
-        "content-type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36",
-        "Referer": "https://www.imdb.com/",
-        "x-imdb-user-country": "US",
-        "x-imdb-user-language": "en-US"
-    }
+    headers = get_graphql_headers()
     
     response = requests.post(url, json=payload, headers=headers)
     

@@ -1,29 +1,31 @@
 import requests
 import json
 import argparse
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
 def search_by_genre(target_genre="Action", limit=50, languages=None, min_year=None, max_year=None, min_rating=None, max_rating=None, title_type=None, after_cursor=None):
     """Search movies by genre and other filters using IMDb GraphQL API"""
-    
-    url = "https://caching.graphql.imdb.com/"
-    
+
+    url = GRAPHQL_CACHING_URL
+    headers = get_graphql_headers()
+
     # Build constraints object
     constraints = {}
-    
+
     if target_genre:
         constraints["genreConstraint"] = {"allGenreIds": [target_genre]}
-    
+
     if languages:
         lang_list = languages if isinstance(languages, list) else [languages]
         constraints["languageConstraint"] = {"allLanguages": lang_list}
-    
+
     if min_year or max_year:
         start_date = f"{min_year or 1900}-01-01"
         end_date = f"{max_year or 2030}-12-31"
         constraints["releaseDateConstraint"] = {
             "releaseDateRange": {"start": start_date, "end": end_date}
         }
-    
+
     if min_rating or max_rating:
         rating_range = {}
         if min_rating:
@@ -31,10 +33,10 @@ def search_by_genre(target_genre="Action", limit=50, languages=None, min_year=No
         if max_rating:
             rating_range["max"] = max_rating
         constraints["userRatingsConstraint"] = {"aggregateRatingRange": rating_range}
-    
+
     if title_type:
         constraints["titleTypeConstraint"] = {"anyTitleTypeIds": [title_type]}
-    
+
     variables = {
         "first": limit,
         "sortBy": "POPULARITY"
@@ -43,7 +45,7 @@ def search_by_genre(target_genre="Action", limit=50, languages=None, min_year=No
         variables["after"] = after_cursor
     if constraints:
         variables["constraints"] = constraints
-    
+
     payload = {
         "query": """query AdvancedTitleSearch($first: Int!, $constraints: AdvancedTitleSearchConstraints, $after: String) {
           advancedTitleSearch(first: $first, constraints: $constraints, after: $after) {
@@ -80,17 +82,9 @@ def search_by_genre(target_genre="Action", limit=50, languages=None, min_year=No
         "operationName": "AdvancedTitleSearch",
         "variables": variables
     }
-    
-    headers = {
-        "accept": "application/graphql+json, application/json",
-        "content-type": "application/json",
-        "origin": "https://www.imdb.com",
-        "referer": "https://www.imdb.com/",
-        "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36"
-    }
-    
+
     response = requests.post(url, headers=headers, json=payload)
-    
+
     if response.status_code != 200:
         print(f"❌ HTTP error from IMDb GraphQL: {response.status_code}")
         print(f"Response: {response.text[:500]}")
@@ -114,12 +108,12 @@ def main():
     parser.add_argument("--type", help="Title type (movie, tvSeries, etc.)")
     parser.add_argument("--languages", nargs="+", help="Language codes (en te hi, etc.)")
     parser.add_argument("--pages", type=int, default=1, help="Number of pages to fetch")
-    
+
     args = parser.parse_args()
-    
+
     all_movies = []
     after_cursor = None
-    
+
     for page in range(args.pages):
         try:
             movies, page_info = search_by_genre(
@@ -137,34 +131,34 @@ def main():
             raise SystemExit(f"Aborted: IMDb request failed ({e})")
         except RuntimeError as e:
             raise SystemExit(f"Aborted: {e}")
-        
+
         all_movies.extend(movies)
-        
+
         if not page_info.get("hasNextPage"):
             print(f"No more pages available after page {page + 1}")
             break
-            
+
         after_cursor = page_info.get("endCursor")
         print(f"Page {page + 1}: Found {len(movies)} movies")
-    
+
     print(f"\nTotal found: {len(all_movies)} movies matching filters")
-    
+
     for movie in all_movies:
         title_data = movie.get("node", {}).get("title", {})
-        
+
         # Safe extraction with None checks
         ratings_summary = title_data.get('ratingsSummary') or {}
         rating = ratings_summary.get('aggregateRating', 'N/A')
-        
+
         release_year = title_data.get('releaseYear') or {}
         year = release_year.get('year', 'N/A')
-        
+
         title_type = title_data.get('titleType') or {}
         movie_type = title_type.get('text', 'N/A')
-        
+
         title_text = title_data.get('titleText') or {}
         title = title_text.get('text', 'N/A')
-        
+
         print(f"{title} ({year}) [{movie_type}] - {rating}")
 
 if __name__ == "__main__":

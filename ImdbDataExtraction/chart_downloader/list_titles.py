@@ -6,24 +6,14 @@ import argparse
 import json
 
 import requests
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
 OPERATION_NAME = "TitleListMainPage"
 PERSISTED_QUERY_SHA256 = "40709e97940b0e987bf53a1be0d700d9e8486576e219aa5fff35c434e91db8c5"
 DEFAULT_PAGE_SIZE = 250
 
-HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "accept-language": "en-US,en;q=0.9",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "priority": "u=1, i",
-    "referer": "https://www.imdb.com/",
-    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
-    "x-imdb-client-name": "imdb-web-next-localized",
-    "x-imdb-user-country": "US",
-    "x-imdb-user-language": "en-US",
-}
+HEADERS = get_graphql_headers()
 
 
 def normalize_runtime(runtime_seconds):

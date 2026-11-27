@@ -10,23 +10,13 @@ import json
 import re
 
 import requests
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
 from rt_reviews import DEFAULT_PAGE_COUNT, DEFAULT_TIMEOUT, fetch_reviews
 from rt_search import search_content
 
-IMDB_URL = "https://caching.graphql.imdb.com/"
-
-IMDB_HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "accept-language": "en-US,en;q=0.9",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "user-agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/146.0.0.0 Safari/537.36"
-    ),
-}
+IMDB_URL = GRAPHQL_CACHING_URL
+IMDB_HEADERS = get_graphql_headers()
 
 IMDB_TITLE_QUERY = """
 query GetTitle($id: ID!) {

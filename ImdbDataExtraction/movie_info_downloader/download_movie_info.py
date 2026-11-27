@@ -1,19 +1,20 @@
+from ImdbDataExtraction.utils import (
+    GRAPHQL_CACHING_URL,
+    GRAPHQL_API_URL,
+    GRAPHQL_PRIMARY_URL,
+    get_graphql_headers,
+)
+
 import requests
 import json
 import re
 
 GRAPHQL_URLS = (
-    "https://caching.graphql.imdb.com/",
-    "https://api.graphql.imdb.com/",
-    "https://graphql.imdb.com/",
+    GRAPHQL_CACHING_URL,
+    GRAPHQL_API_URL,
+    GRAPHQL_PRIMARY_URL,
 )
-HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "referer": "https://www.imdb.com/",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-}
+HEADERS = get_graphql_headers()
 
 
 def _person_url(person_id):

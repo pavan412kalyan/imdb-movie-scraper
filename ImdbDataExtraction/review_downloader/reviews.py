@@ -4,20 +4,14 @@ import json
 import time
 import argparse
 from pathlib import Path
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
 # === CONFIGURATION ===
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
 OPERATION_NAME = "TitleReviewsRefine"
 PAGE_SIZE = 25 #fixed
 
-HEADERS = {
-    'accept': 'application/graphql+json, application/json',
-    'accept-language': 'en-US,en;q=0.9',
-    'content-type': 'application/json',
-    'origin': 'https://www.imdb.com',
-    'referer': 'https://www.imdb.com/',
-    'priority': 'u=1, i'
-}
+HEADERS = get_graphql_headers()
 
 def get_variables(movie_id, after_cursor, sort_by="HELPFULNESS_SCORE", sort_order="DESC"):
     variables = {

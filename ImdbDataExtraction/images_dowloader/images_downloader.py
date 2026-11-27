@@ -5,27 +5,12 @@ import json
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
 OPERATION_NAME = "TitleMediaIndexPagination"
 
-HEADERS = {
-    'accept': 'application/graphql+json, application/json',
-    'accept-language': 'en-US,en;q=0.9',
-    'content-type': 'application/json',
-    'origin': 'https://www.imdb.com',
-    'referer': 'https://www.imdb.com/',
-    'sec-ch-ua': '"Google Chrome";v="137", "Chromium";v="137", "Not/A)Brand";v="24"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"macOS"',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-site',
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
-    'x-imdb-client-name': 'imdb-web-next-localized',
-    'x-imdb-user-country': 'US',
-    'x-imdb-user-language': 'en-US'
-}
+HEADERS = get_graphql_headers()
 
 def get_variables(title_id, after_cursor):
     variables = {

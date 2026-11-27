@@ -22,24 +22,15 @@ import json
 import time
 
 import requests
+from ImdbDataExtraction.utils import GRAPHQL_API_URL, get_graphql_headers
 
-API_URL = "https://api.graphql.imdb.com/"
+API_URL = GRAPHQL_API_URL
+HEADERS = get_graphql_headers()
+
 DEFAULT_TIMEOUT = 30
 DEFAULT_PAGE_SIZE = 50
 DEFAULT_COUNTRY = "US"
 DEFAULT_LOCALE = "en-US"
-
-HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "accept-language": "en-US,en;q=0.9",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "referer": "https://www.imdb.com/",
-    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-    "x-imdb-client-name": "imdb-web-next-localized",
-    "x-imdb-user-country": "US",
-    "x-imdb-user-language": "en-US",
-}
 
 STREAMING_TITLES_QUERY = """query StreamingTitles($providerIds: [ID!], $first: Int!, $after: ID) {
   streamingTitles(filter: { providers: $providerIds }) {

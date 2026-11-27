@@ -10,18 +10,13 @@ except ModuleNotFoundError as e:
         "Missing dependency 'requests'. Install dependencies from the repo root with: "
         "python -m pip install -r requirements.txt"
     ) from e
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
 def get_video_data_graphql(video_id):
     """Get video data using GraphQL API"""
-    url = "https://caching.graphql.imdb.com/"
+    url = GRAPHQL_CACHING_URL
     
-    headers = {
-        'accept': 'application/graphql+json, application/json',
-        'content-type': 'application/json',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-        'origin': 'https://www.imdb.com',
-        'referer': 'https://www.imdb.com/'
-    }
+    headers = get_graphql_headers()
     
     query = {
         "query": """query VideoPlaybackData($const: ID!) {
