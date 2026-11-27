@@ -7,19 +7,12 @@ import requests
 import json
 import time
 import urllib.parse
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
 OPERATION_NAME = "AdvancedNameSearch"
 
-HEADERS = {
-    'accept': 'application/graphql+json, application/json',
-    'accept-language': 'en-US,en;q=0.9',
-    'content-type': 'application/json',
-    'origin': 'https://www.imdb.com',
-    'referer': 'https://www.imdb.com/',
-    'priority': 'u=1, i',
-    'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36'
-}
+HEADERS = get_graphql_headers()
 
 def get_variables(after_cursor=None):
     variables = {

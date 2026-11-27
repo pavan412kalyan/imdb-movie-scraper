@@ -5,8 +5,11 @@ import re
 from urllib.parse import urlencode
 
 import requests
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
+HEADERS = get_graphql_headers()
+
 OPERATION_NAME = "NewsCategorySubPagePagination"
 NEWS_QUERY = """
 query NewsCategorySubPagePagination(
@@ -56,17 +59,6 @@ query NewsCategorySubPagePagination(
   }
 }
 """
-
-HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "referer": "https://www.imdb.com/",
-    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-    "x-imdb-client-name": "imdb-web-next-localized",
-    "x-imdb-user-country": "US",
-    "x-imdb-user-language": "en-US",
-}
 
 TAG_RE = re.compile(r"<[^>]+>")
 

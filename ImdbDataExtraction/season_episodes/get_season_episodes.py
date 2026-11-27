@@ -1,16 +1,11 @@
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 import requests
 import json
 import argparse
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
 
-HEADERS = {
-    'accept': 'application/graphql+json, application/json',
-    'content-type': 'application/json',
-    'origin': 'https://www.imdb.com',
-    'referer': 'https://www.imdb.com/',
-    'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36'
-}
+HEADERS = get_graphql_headers()
 
 def build_episode_fields(include_extended):
     if include_extended:

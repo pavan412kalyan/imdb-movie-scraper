@@ -1,11 +1,12 @@
 import requests
 import json
 import argparse
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
 def get_trending_trailers(limit=50):
     """Get trending movie trailers from IMDb"""
     
-    url = "https://caching.graphql.imdb.com/"
+    url = GRAPHQL_CACHING_URL
     
     variables = {
         "limit": limit
@@ -47,15 +48,7 @@ def get_trending_trailers(limit=50):
         "variables": variables
     }
     
-    headers = {
-        "accept": "application/graphql+json, application/json",
-        "content-type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-        "origin": "https://www.imdb.com",
-        "referer": "https://www.imdb.com/",
-        "x-imdb-user-country": "US",
-        "x-imdb-user-language": "en-US"
-    }
+    headers = get_graphql_headers()
     
     response = requests.post(url, json=payload, headers=headers)
     

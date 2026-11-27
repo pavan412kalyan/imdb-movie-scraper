@@ -6,8 +6,11 @@ import argparse
 import json
 
 import requests
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+BASE_URL = GRAPHQL_CACHING_URL
+HEADERS = get_graphql_headers()
+
 OPERATION_NAME = "ChartTitles"
 
 CHART_TYPES = {
@@ -16,15 +19,6 @@ CHART_TYPES = {
     "bottom": "LOWEST_RATED_MOVIES",
     "moviemeter": "MOST_POPULAR_MOVIES",
     "tvmeter": "MOST_POPULAR_TV_SHOWS",
-}
-
-HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "accept-language": "en-US,en;q=0.9",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "referer": "https://www.imdb.com/",
-    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
 }
 
 QUERY_TEMPLATE = """

@@ -39,23 +39,21 @@ def search_all(query, limit=20):
     return response.json()
 
 def format_results(data, limit=20):
-    """Format search results for display"""
+    """Format title and person suggestions, skipping non-result editorial entries."""
     suggestions = data.get("d", [])
     results = []
-    
-    for item in suggestions[:limit]:
+
+    for item in suggestions:
         if not item:
             continue
-            
+
         item_id = item.get("id", "")
         name = item.get("l", "Unknown")
         rank = item.get("rank", 0)
         description = item.get("s", "")
-        year = item.get("y")  # Year for titles
-        
-        # Determine if it's a title or person based on ID prefix
+        year = item.get("y")
+
         if item_id.startswith("tt"):
-            # Title (movie/TV show)
             result = {
                 "type": "Title",
                 "id": item_id,
@@ -66,7 +64,6 @@ def format_results(data, limit=20):
                 "image": item.get("i", {}).get("imageUrl") if item.get("i") else None
             }
         elif item_id.startswith("nm"):
-            # Person
             result = {
                 "type": "Person",
                 "id": item_id,
@@ -77,9 +74,11 @@ def format_results(data, limit=20):
             }
         else:
             continue
-            
+
         results.append(result)
-    
+        if len(results) >= limit:
+            break
+
     return results
 
 def main():

@@ -8,17 +8,11 @@ import requests
 import json
 import argparse
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
 
-HEADERS = {
-    'accept': 'application/graphql+json, application/json',
-    'accept-language': 'en-US,en;q=0.9',
-    'content-type': 'application/json',
-    'origin': 'https://www.imdb.com',
-    'referer': 'https://www.imdb.com/',
-    'priority': 'u=1, i',
-    'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36'
-}
+BASE_URL = GRAPHQL_CACHING_URL
+
+HEADERS = get_graphql_headers()
 
 def get_movie_details(movie_id):
     """Get detailed movie information by IMDb ID"""
@@ -78,7 +72,7 @@ def get_movie_details(movie_id):
                 plainText
               }
             }
-            imageCount: images {
+            imageCount: images(first: 1) {
               total
             }
             videoCount: videos {
@@ -146,7 +140,7 @@ def get_movie_details(movie_id):
               }
             }
             episodes {
-              episodes {
+              episodes(first: 1) {
                 total
               }
             }
@@ -157,7 +151,7 @@ def get_movie_details(movie_id):
                 }
               }
             }
-            companyCredits {
+            companyCredits(first: 20) {
               edges {
                 node {
                   company {
@@ -192,7 +186,7 @@ def get_movie_details(movie_id):
 
 
 
-            akas {
+            akas(first: 20) {
               edges {
                 node {
                   text
@@ -209,7 +203,7 @@ def get_movie_details(movie_id):
                 difference
               }
             }
-            keywords {
+            keywords(first: 20) {
               edges {
                 node {
                   text
@@ -243,7 +237,7 @@ def get_movie_details(movie_id):
             reviews(first: 1) {
               total
             }
-            connections {
+            connections(first: 20) {
               edges {
                 node {
                   associatedTitle {
@@ -298,7 +292,7 @@ def get_movie_details(movie_id):
                 }
               }
             }
-            nominations {
+            nominations(first: 1) {
               total
             }
             canHaveEpisodes

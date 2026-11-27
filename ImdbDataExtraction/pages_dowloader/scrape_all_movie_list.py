@@ -3,24 +3,18 @@ import glob
 import json
 import os
 import time
-
 import requests
 
-BASE_URL = "https://caching.graphql.imdb.com/"
+from ImdbDataExtraction.utils import GRAPHQL_CACHING_URL, get_graphql_headers
+
+BASE_URL = GRAPHQL_CACHING_URL
+HEADERS = get_graphql_headers()
+
 OPERATION_NAME = "AdvancedTitleSearch"
 DEFAULT_OUTPUT_DIR = "all_imdb_movies"
 DEFAULT_TITLE_TYPES = ["movie"]
 DEFAULT_PAGE_SIZE = 20
 DEFAULT_TIMEOUT = 30
-
-HEADERS = {
-    "accept": "application/graphql+json, application/json",
-    "accept-language": "en-US,en;q=0.9",
-    "content-type": "application/json",
-    "origin": "https://www.imdb.com",
-    "referer": "https://www.imdb.com/",
-    "priority": "u=1, i",
-}
 
 ADVANCED_TITLE_SEARCH_QUERY = """query AdvancedTitleSearch($after: String, $first: Int!, $constraints: AdvancedTitleSearchConstraints) {
   advancedTitleSearch(after: $after, first: $first, constraints: $constraints) {
